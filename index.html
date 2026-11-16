@@ -44,6 +44,17 @@ body{
 .title-foot{display:flex;align-items:center;justify-content:center;gap:8px;font-size:clamp(11px,3.4vw,14px);font-weight:800;color:#54759b;}
 .title-foot .best-all{background:#fff;border:2px solid #d3e6fa;border-radius:99px;padding:4px 10px;}
 
+/* ---------- grade selector ---------- */
+.grade-row{display:flex;align-items:center;gap:4px;width:100%;}
+.grade-cap{flex:0 0 auto;font-size:clamp(10px,3vw,13px);font-weight:900;color:#4b719c;
+  background:#e8f3ff;border:1.5px solid #cfe3f8;border-radius:99px;padding:5px 7px;line-height:1;}
+.g-btn{flex:1 1 0;min-width:0;border:2px solid #cfe3f8;background:#fff;color:#2a5b96;
+  border-radius:12px;padding:7px 0;font-family:inherit;font-weight:900;font-size:clamp(12px,3.4vw,15px);
+  cursor:pointer;line-height:1;box-shadow:0 3px 0 #dbe9f8;transition:background .15s,box-shadow .07s,transform .07s;}
+.g-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe9f8;}
+.g-btn.on{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;border-color:#2f7ff0;
+  box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
+
 /* ---------- hud ---------- */
 #screenGame{align-items:center;justify-content:center;
   background:radial-gradient(120% 90% at 50% 0%,#d9f1ff 0%,#eaf8ff 50%,#f4ffef 100%);}
@@ -242,10 +253,20 @@ body{
         <span class="sub">몬스터가 오기 전에 문제를 풀어 물리쳐라!</span>
       </div>
 
+      <div class="grade-row" id="gradeRow" role="group" aria-label="수학 학년 선택">
+        <span class="grade-cap">학년</span>
+        <button class="g-btn on" type="button" data-grade="1">초1</button>
+        <button class="g-btn" type="button" data-grade="2">초2</button>
+        <button class="g-btn" type="button" data-grade="3">초3</button>
+        <button class="g-btn" type="button" data-grade="4">초4</button>
+        <button class="g-btn" type="button" data-grade="5">초5</button>
+        <button class="g-btn" type="button" data-grade="6">초6</button>
+      </div>
+
       <button class="mode-card m-math" data-mode="math" type="button">
         <span class="mc-emoji">🔢</span>
         <span class="mc-txt">수학 대모험
-          <span class="mc-sub">더하기 · 빼기 3단계</span>
+          <span class="mc-sub" id="subMath">한 자리 덧셈·뺄셈</span>
         </span>
         <span class="mc-best" data-best="math">최고 0점</span>
       </button>
@@ -261,7 +282,7 @@ body{
       <button class="mode-card m-mix" data-mode="mix" type="button">
         <span class="mc-emoji">⚡</span>
         <span class="mc-txt">무한 혼합
-          <span class="mc-sub">수학 + 낱말, 끝없이 도전</span>
+          <span class="mc-sub" id="subMix">수학 + 낱말, 끝없이 도전</span>
         </span>
         <span class="mc-best" data-best="mix">최고 0점</span>
       </button>
@@ -358,6 +379,40 @@ function ri(a,b){ return a + Math.floor(Math.random()*(b-a+1)); }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function gcd(a,b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+function lcm(a,b){ return a/gcd(a,b)*b; }
+
+/* 글자 폭을 재서 말풍선·문제창에 꼭 맞는 글자 크기를 고른다 */
+var _mctx = null;
+function measureText(txt, px){
+  try{
+    if(!_mctx) _mctx = document.createElement('canvas').getContext('2d');
+    _mctx.font = '900 ' + px + 'px "Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,-apple-system,sans-serif';
+    return _mctx.measureText(txt).width;
+  }catch(e){ return txt.length * px * 0.62; }
+}
+function fitFont(lines, maxW, maxPx, minPx){
+  var px = maxPx;
+  for(var guard = 0; guard < 40; guard++){
+    var w = 0;
+    for(var i=0;i<lines.length;i++){
+      var lw = measureText(lines[i], px) + lines[i].length * 1.1; // letter-spacing 여유
+      if(lw > w) w = lw;
+    }
+    if(w <= maxW || px <= minPx) break;
+    px -= 1;
+  }
+  return px;
+}
+var GRADE_INFO = [
+  null,
+  { tag:'초1', sub:'한 자리 덧셈·뺄셈' },
+  { tag:'초2', sub:'곱셈 구구 · 받아올림' },
+  { tag:'초3', sub:'곱셈 · 나눗셈 · 세 자리' },
+  { tag:'초4', sub:'두 자리 곱셈 · 혼합 계산' },
+  { tag:'초5', sub:'괄호 · 약수·배수 · 단위' },
+  { tag:'초6', sub:'비율 · 퍼센트 · 방정식' }
+];
 
 var Store = {
   get: function(k,d){ try{ var v=window.localStorage.getItem(k); return v===null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -532,10 +587,32 @@ var recentWords = [];
 /* =========================================================
    problem generators
    ========================================================= */
-function genMath(stage){
-  var s = Math.min(stage, 3);
-  var a, b, op;
+function genMath(grade, stage){
+  var g = clamp(grade || 1, 1, 6);
+  var s = clamp(stage || 1, 1, 3);
+  var p;
+  if(g === 1) p = genG1(s);
+  else if(g === 2) p = genG2(s);
+  else if(g === 3) p = genG3(s);
+  else if(g === 4) p = genG4(s);
+  else if(g === 5) p = genG5(s);
+  else p = genG6(s);
+  p.grade = g;
+  return p;
+}
 
+/* 문제 문자열은 말풍선에 꼭 맞도록 짧게 유지한다 (긴 문제는 두 줄) */
+function mkMath(text, ans, lines){
+  return { type:'math', text:text, ans:ans, lines: lines || [text] };
+}
+function qMul(a,b){ return mkMath(a + ' × ' + b + ' = ?', a*b); }
+function qDiv(a,b){ return mkMath(a + ' ÷ ' + b + ' = ?', a/b); }
+function qAdd(a,b){ return mkMath(a + ' + ' + b + ' = ?', a+b); }
+function qSub(a,b){ return mkMath(a + ' - ' + b + ' = ?', a-b); }
+
+/* 초1 — 한 자리·두 자리 덧셈·뺄셈 */
+function genG1(s){
+  var a, b, op;
   if(s === 1){
     if(Math.random() < 0.5){ a = ri(1,9); b = ri(1,10-a); op = '+'; }
     else { a = ri(2,10); b = ri(1,a-1); op = '-'; }
@@ -562,12 +639,197 @@ function genMath(stage){
       op = '-';
     }
   }
+  return (op === '+') ? qAdd(a,b) : qSub(a,b);
+}
 
-  var ans = (op === '+') ? (a + b) : (a - b);
-  return {
-    type: 'math', op: op, a: a, b: b, ans: ans,
-    text: a + ' ' + op + ' ' + b + ' = ?'
-  };
+/* 초2 — 곱셈 구구, 두 자리 받아올림·내림 */
+function genG2(s){
+  var r = Math.random();
+
+  function noCarryAdd(){
+    var u1 = ri(0,8), u2 = ri(0,9-u1);
+    return qAdd(10*ri(1,4) + u1, 10*ri(1,4) + u2);
+  }
+  function noBorrowSub(){
+    var u2 = ri(0,9), u1 = ri(u2,9), t1 = ri(3,9), t2 = ri(1,t1-1);
+    return qSub(10*t1 + u1, 10*t2 + u2);
+  }
+  function carryAdd(){
+    var u1 = ri(2,9), u2 = ri(10-u1,9);
+    return qAdd(10*ri(1,4) + u1, 10*ri(1,4) + u2);
+  }
+  function borrowSub(){
+    var u1 = ri(1,8), u2 = ri(u1+1,9), t1 = ri(3,9), t2 = ri(1,t1-1);
+    return qSub(10*t1 + u1, 10*t2 + u2);
+  }
+
+  if(s === 1){
+    if(r < 0.50) return qMul(ri(2,9), ri(2,9));
+    if(r < 0.78) return noCarryAdd();
+    return noBorrowSub();
+  }
+  if(s === 2){
+    if(r < 0.45) return qMul(ri(2,9), ri(2,9));
+    if(r < 0.75) return carryAdd();
+    return borrowSub();
+  }
+  if(r < 0.40) return qMul(ri(2,9), ri(2,9));
+  if(r < 0.70) return carryAdd();
+  return borrowSub();
+}
+
+/* 초3 — 두 자리 × 한 자리, 나눗셈, 세 자리 덧셈·뺄셈 */
+function genG3(s){
+  var r = Math.random(), b, q;
+  if(s === 1){
+    if(r < 0.38) return qMul(ri(11,49), ri(2,9));
+    if(r < 0.66){ b = ri(2,9); q = ri(2,9); return qDiv(b*q, b); }
+    return qAdd(ri(120,480), ri(110,410));
+  }
+  if(s === 2){
+    if(r < 0.40) return qMul(ri(12,49), ri(2,9));
+    if(r < 0.68){ b = ri(2,9); q = ri(3,9); return qDiv(b*q, b); }
+    return qSub(ri(320,860), ri(120,310));
+  }
+  if(r < 0.34) return qMul(ri(21,49), ri(3,9));
+  if(r < 0.64){ b = ri(3,9); q = ri(11,29); return qDiv(b*q, b); }
+  if(r < 0.82) return qAdd(ri(230,690), ri(180,300));
+  return qSub(ri(420,960), ri(180,390));
+}
+
+/* 초4 — 두 자리·세 자리 곱셈, 나눗셈, 혼합 계산 */
+function genG4(s){
+  var r = Math.random(), b, q, a, c;
+
+  function orderQ(){
+    var t = ri(1,4);
+    if(t === 1){ a = ri(2,9); b = ri(2,9); c = ri(2,9); return mkMath(a + ' + ' + b + ' × ' + c + ' = ?', a + b*c); }
+    if(t === 2){ b = ri(2,9); c = ri(2,9); a = ri(b*c + 1, b*c + 30); return mkMath(a + ' - ' + b + ' × ' + c + ' = ?', a - b*c); }
+    if(t === 3){ c = ri(2,9); q = ri(2,9); a = ri(1,40); return mkMath(a + ' + ' + (c*q) + ' ÷ ' + c + ' = ?', a + q); }
+    c = ri(2,9); q = ri(2,9); a = ri(q + 1, q + 40);
+    return mkMath(a + ' - ' + (c*q) + ' ÷ ' + c + ' = ?', a - q);
+  }
+
+  if(s === 1){
+    if(r < 0.36) return qMul(ri(12,29), ri(11,19));
+    if(r < 0.64) return qMul(ri(112,249), ri(2,9));
+    if(r < 0.88){ b = ri(11,19); q = ri(2,9); return qDiv(b*q, b); }
+    return orderQ();
+  }
+  if(s === 2){
+    if(r < 0.30) return qMul(ri(13,29), ri(12,29));
+    if(r < 0.56) return qMul(ri(125,349), ri(2,9));
+    if(r < 0.78){ b = ri(11,24); q = ri(3,9); return qDiv(b*q, b); }
+    return orderQ();
+  }
+  if(r < 0.34) return orderQ();
+  if(r < 0.64) return qMul(ri(15,39), ri(11,29));
+  if(r < 0.82) return qMul(ri(135,399), ri(3,9));
+  b = ri(12,29); q = ri(4,9);
+  return qDiv(b*q, b);
+}
+
+/* 초5 — 괄호 혼합 계산, 최대공약수·최소공배수, 단위 바꾸기 */
+function genG5(s){
+  var r = Math.random(), a, b, c, q, n;
+
+  function parenQ(){
+    var t = ri(1,4);
+    if(t === 1){
+      c = ri(2,9); var sum = c * ri(3,15);
+      a = ri(Math.max(2, sum - 40), sum - 1); b = sum - a;
+      return mkMath('(' + a + ' + ' + b + ') ÷ ' + c + ' = ?', sum / c);
+    }
+    if(t === 2){ a = ri(2,9); c = ri(1,9); b = ri(c + 1, c + 9); return mkMath(a + ' × (' + b + ' - ' + c + ') = ?', a*(b-c)); }
+    if(t === 3){
+      c = ri(2,9); q = ri(2,9); var diff = c*q; b = ri(1,20); a = diff + b;
+      return mkMath('(' + a + ' - ' + b + ') ÷ ' + c + ' = ?', q);
+    }
+    a = ri(2,20); b = ri(2,20); c = ri(2,9);
+    return mkMath('(' + a + ' + ' + b + ') × ' + c + ' = ?', (a+b)*c);
+  }
+  function gcdQ(){
+    var x, y, g = 1, guard = 0;
+    do{ x = ri(4,30); y = ri(4,30); g = gcd(x,y); guard++; }while((x === y || g < 2) && guard < 50);
+    return mkMath(x + ',' + y + '의 최대공약수 = ?', g, [x + ',' + y, '최대공약수 = ?']);
+  }
+  function lcmQ(){
+    var x, y, guard = 0;
+    do{ x = ri(3,12); y = ri(3,12); guard++; }while((x === y || lcm(x,y) > 200) && guard < 50);
+    return mkMath(x + ',' + y + '의 최소공배수 = ?', lcm(x,y), [x + ',' + y, '최소공배수 = ?']);
+  }
+  function unitQ(){
+    var t = ri(1,10);
+    if(t <= 3){ n = ri(2,6); return mkMath(n + '시간 = ?분', n*60); }
+    if(t <= 5){ n = ri(2,9); return mkMath(n + '분 = ?초', n*60); }
+    if(t <= 7){ n = ri(2,9); return mkMath(n + 'm = ?cm', n*100); }
+    if(t === 8){ n = ri(2,9); return mkMath((n*1000) + 'm = ?km', n); }
+    if(t === 9){ n = ri(2,4); return mkMath(n + 'km = ?m', n*1000); }
+    n = ri(2,3); return mkMath(n + 'kg = ?g', n*1000);
+  }
+
+  if(s === 1){
+    if(r < 0.45) return parenQ();
+    if(r < 0.80) return unitQ();
+    return gcdQ();
+  }
+  if(s === 2){
+    if(r < 0.30) return parenQ();
+    if(r < 0.55) return unitQ();
+    if(r < 0.78) return gcdQ();
+    return lcmQ();
+  }
+  if(r < 0.38) return parenQ();
+  if(r < 0.58) return unitQ();
+  if(r < 0.79) return gcdQ();
+  return lcmQ();
+}
+
+/* 초6 — 퍼센트, 비율, □가 있는 식, 암산 도전 */
+function genG6(s){
+  var r = Math.random(), a, b, c, q, x;
+
+  function percentQ(){
+    var base = ri(2,20)*10, p = ri(1,9)*10;
+    return mkMath(base + '의 ' + p + '% = ?', base*p/100);
+  }
+  function ratioQ(){
+    a = ri(1,7); b = ri(2,9); var k = ri(2,6);
+    return mkMath(a + ' : ' + b + ' = ' + (a*k) + ' : ?', b*k);
+  }
+  function missingQ(){
+    var t = ri(1,3);
+    if(t === 1){ b = ri(2,9); x = ri(2,12); return mkMath('□ × ' + b + ' = ' + (b*x), x); }
+    if(t === 2){ b = ri(11,49); x = ri(20,90); return mkMath('□ - ' + b + ' = ' + x, x + b); }
+    b = ri(11,49); x = ri(20,90); return mkMath('□ + ' + b + ' = ' + (x+b), x);
+  }
+  function mentalQ(){
+    a = pick([12,15,16,18,24,25,35,45]); b = pick([11,12,14,15,16,18,20]);
+    return mkMath(a + ' × ' + b + ' = ?', a*b);
+  }
+  function divAddQ(){
+    b = ri(11,19); q = ri(2,9); c = ri(5,45);
+    return mkMath((b*q) + ' ÷ ' + b + ' + ' + c + ' = ?', q + c);
+  }
+
+  if(s === 1){
+    if(r < 0.35) return percentQ();
+    if(r < 0.65) return missingQ();
+    if(r < 0.85) return mentalQ();
+    return divAddQ();
+  }
+  if(s === 2){
+    if(r < 0.25) return percentQ();
+    if(r < 0.50) return ratioQ();
+    if(r < 0.70) return missingQ();
+    if(r < 0.85) return mentalQ();
+    return divAddQ();
+  }
+  if(r < 0.20) return percentQ();
+  if(r < 0.40) return ratioQ();
+  if(r < 0.60) return missingQ();
+  if(r < 0.80) return mentalQ();
+  return divAddQ();
 }
 
 function genWord(stage){
@@ -639,6 +901,8 @@ function genWord(stage){
    ========================================================= */
 var S = {
   mode: 'math',
+  grade: 1,
+  gradeSel: 1,
   stage: 1,
   hearts: 5,
   score: 0,
@@ -701,6 +965,8 @@ var elOverlay = $('overlay');
 /* =========================================================
    stage tuning
    ========================================================= */
+var SPEED_BOOST = 1.30;   // 몹 하강 속도 (기존 대비 +30%)
+
 function stageParams(stage){
   var s = clamp(stage, 1, 5);
   var tbl = {
@@ -710,7 +976,12 @@ function stageParams(stage){
     4: { spawn: 1.8, speed: 0.094 },
     5: { spawn: 1.6, speed: 0.102 }
   };
-  return tbl[s];
+  var p = tbl[s];
+  var g = S.grade || 1;
+  // 몹이 내려오는 속도를 조금 더 빠르게 (기존보다 30%)
+  // 학년이 올라가면 문제가 길어지므로 몹이 나오는 간격만 아주 살짝 넉넉하게
+  var gap = (g >= 5) ? 1.16 : (g === 4 ? 1.09 : 1);
+  return { spawn: p.spawn * gap, speed: p.speed * SPEED_BOOST };
 }
 
 function modeType(){
@@ -718,20 +989,29 @@ function modeType(){
   return S.mode;
 }
 function makeProblem(stage){
-  return modeType() === 'math' ? genMath(stage) : genWord(stage);
+  return modeType() === 'math' ? genMath(S.grade, stage) : genWord(stage);
 }
 
 /* =========================================================
    HUD
    ========================================================= */
-function bestKey(mode){ return 'gm_best_' + mode; }
+function bestKey(mode, grade){ return 'gm_best_' + mode + '_g' + (grade || 1); }
+var LEGACY_BEST = { math:'gm_best_math', word:'gm_best_word', mix:'gm_best_mix' };
+function bestOf(mode, grade){
+  var v = Store.get(bestKey(mode, grade), null);
+  if(v === null && grade === 1){
+    var old = Store.get(LEGACY_BEST[mode], null);
+    if(old !== null){ v = old; Store.set(bestKey(mode, 1), old); }
+  }
+  return v || 0;
+}
 
 function updateHud(){
   var full = Math.max(0, S.hearts);
   elHearts.textContent = new Array(full + 1).join('❤️') + new Array(5 - full + 1).join('🤍');
   elScore.textContent = S.score + '점';
-  var tag = (S.mode === 'word') ? '🔤 ' : '🔢 ';
-  elStage.textContent = (S.mode === 'mix') ? ('⚡ ' + S.stage + '단계') : (tag + S.stage + '/3');
+  if(S.mode === 'word') elStage.textContent = '🔤 ' + S.stage + '단계';
+  else elStage.textContent = '초' + (S.grade || 1) + ' · ' + S.stage + '단계';
   if(S.combo >= 2){ elCombo.hidden = false; elCombo.textContent = '🔥 x' + S.combo; }
   else elCombo.hidden = true;
 }
@@ -740,7 +1020,7 @@ function addScore(pts){
   S.score += pts;
   if(S.score > S.best){
     S.best = S.score;
-    Store.set(bestKey(S.mode), S.best);
+    Store.set(bestKey(S.mode, S.grade), S.best);
   }
   updateHud();
 }
@@ -1045,7 +1325,15 @@ function showPanelFor(prob){
   } else if(prob && prob.type === 'math'){
     elPanelWord.hidden = true;
     elPanelMath.hidden = false;
-    elQMath.textContent = prob.text;
+    var lines = prob.lines || [prob.text];
+    elQMath.innerHTML = '';
+    for(var li=0;li<lines.length;li++){
+      if(li) elQMath.appendChild(document.createElement('br'));
+      elQMath.appendChild(document.createTextNode(lines[li]));
+    }
+    var ansDigits = String(prob.ans).length;
+    elAnsBox.style.minWidth = Math.min(88, 24 + ansDigits * 14) + 'px';
+    fitQuestion(lines);
     renderInput();
   } else {
     elPanelMath.hidden = true;
@@ -1059,6 +1347,17 @@ function renderInput(){
   if(S.input) elAnsBox.classList.add('typed');
   else elAnsBox.classList.remove('typed');
   elAnsBox.classList.remove('bad');
+}
+
+/* 문제가 길어도 숫자 입력창을 밀어내지 않게 문제 글자 크기를 맞춘다 */
+function fitQuestion(lines){
+  var bar = elQMath.parentNode;
+  var barW = bar ? bar.getBoundingClientRect().width : 300;
+  var ansW = elAnsBox.getBoundingClientRect().width || 60;
+  var avail = Math.max(112, barW - ansW - 24);
+  var base = Math.min(34, Math.max(20, window.innerWidth * 0.068));
+  var px = fitFont(lines, avail, base, 13);
+  elQMath.style.fontSize = px.toFixed(0) + 'px';
 }
 
 function flashBad(){
@@ -1091,6 +1390,27 @@ function bubbleTextOf(prob){
   return prob.plain;
 }
 
+function bubbleMaxW(m){
+  var fr = fieldRect();
+  var edge = Math.min(m.x, 1 - m.x) * fr.width - 12;
+  return Math.max(96, Math.min(fr.width * 0.62, edge * 2));
+}
+function bubbleBasePx(m){
+  return m.boss ? Math.min(19, Math.max(13, window.innerWidth * 0.036))
+                : Math.min(17, Math.max(11, window.innerWidth * 0.032));
+}
+/* 문제가 길어도 말풍선 밖으로 삐져나가지 않게 줄을 나우고 글자를 줄인다 */
+function setBubbleText(bub, prob, m){
+  var lines = (prob.type === 'math' && prob.lines) ? prob.lines : [bubbleTextOf(prob)];
+  bub.innerHTML = '';
+  for(var i=0;i<lines.length;i++){
+    if(i) bub.appendChild(document.createElement('br'));
+    bub.appendChild(document.createTextNode(lines[i]));
+  }
+  var px = fitFont(lines, bubbleMaxW(m), bubbleBasePx(m), 9);
+  bub.style.fontSize = px.toFixed(0) + 'px';
+}
+
 function spawnMonster(isBoss){
   var par = stageParams(S.stage);
   var prob = makeProblem(S.stage);
@@ -1120,7 +1440,6 @@ function spawnMonster(isBoss){
 
   var bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.textContent = bubbleTextOf(prob);
   el.appendChild(bubble);
 
   var body = document.createElement('div');
@@ -1152,13 +1471,15 @@ function spawnMonster(isBoss){
     bossInfo: boss,
     x: isBoss ? 0.5 : chooseX(),
     y: isBoss ? -0.14 : -0.06,
-    speed: isBoss ? (0.019 + Math.min(S.stage, 5) * 0.0016) : (par.speed * (0.92 + Math.random()*0.22)),
+    speed: isBoss ? (0.019 + Math.min(S.stage, 5) * 0.0016) * SPEED_BOOST
+                  : (par.speed * (0.92 + Math.random()*0.22)),
     dead: false,
     el: el
   };
 
   el.style.left = (m.x * 100).toFixed(2) + '%';
   el.style.top = (m.y * 100).toFixed(2) + '%';
+  setBubbleText(bubble, prob, m);
 
   el.addEventListener('pointerdown', function(ev){
     ev.preventDefault();
@@ -1218,11 +1539,11 @@ function pressDigit(d){
   var t = currentTarget();
   if(!t || t.prob.type !== 'math') return;
   if(Date.now() < lockUntil) return;
-  if(S.input.length >= 2) S.input = '';
+  var ansStr = String(t.prob.ans);
+  if(S.input.length >= ansStr.length) S.input = '';
   S.input += d;
   renderInput();
 
-  var ansStr = String(t.prob.ans);
   if(S.input.length >= ansStr.length){
     if(S.input === ansStr){
       hitTarget();
@@ -1321,7 +1642,7 @@ function resolveHit(ms){
     if(m.hp <= 0){ defeatBoss(m); return; }
     m.prob = makeProblem(S.stage);
     var bub = m.el.querySelector('.bubble');
-    if(bub) bub.textContent = bubbleTextOf(m.prob);
+    if(bub) setBubbleText(bub, m.prob, m);
     if(!currentTarget()) setTarget(m);
   } else {
     m.dead = true;
@@ -1440,7 +1761,7 @@ function stageClearScreen(){
   } else {
     showOverlay({
       emoji: '🎉',
-      title: S.stage + '단계 클리어!',
+      title: (S.mode === 'word' ? '' : '초' + S.grade + ' ') + S.stage + '단계 클리어!',
       sub: '보스를 물리쳤어요! 다음 단계로 가 볼까요?',
       stats: [{ label:'점수', value:S.score }, { label:'최고', value:S.best }],
       confetti: true,
@@ -1717,15 +2038,33 @@ function togglePause(){
    ========================================================= */
 function refreshTitleBests(){
   var all = 0;
+  var g = S.gradeSel || 1;
   var modes = ['math','word','mix'];
   for(var i=0;i<modes.length;i++){
-    var v = Store.get(bestKey(modes[i]), 0) || 0;
+    var v = bestOf(modes[i], g);
     if(v > all) all = v;
     var el = document.querySelector('[data-best="' + modes[i] + '"]');
-    if(el) el.textContent = '최고 ' + v + '점';
+    if(el) el.textContent = '초' + g + ' 최고 ' + v + '점';
   }
   var be = $('bestAll');
   if(be) be.textContent = all;
+  var info = GRADE_INFO[g];
+  var sm = $('subMath');
+  if(sm && info) sm.textContent = info.sub;
+  var sx = $('subMix');
+  if(sx) sx.textContent = '초' + g + ' 수학 + 낱말, 끝없이';
+}
+
+function setGrade(g){
+  S.gradeSel = clamp(parseInt(g, 10) || 1, 1, 6);
+  Store.set('gm_grade', S.gradeSel);
+  var btns = document.querySelectorAll('.g-btn');
+  for(var i=0;i<btns.length;i++){
+    var gi = parseInt(btns[i].getAttribute('data-grade'), 10);
+    if(gi === S.gradeSel) btns[i].classList.add('on');
+    else btns[i].classList.remove('on');
+  }
+  refreshTitleBests();
 }
 
 function soundIcon(){
@@ -1755,6 +2094,7 @@ function toTitle(){
 function startGame(mode){
   Sfx.unlock();
   S.mode = mode;
+  S.grade = S.gradeSel || 1;
   S.stage = 1;
   S.hearts = 5;
   S.score = 0;
@@ -1768,7 +2108,7 @@ function startGame(mode){
   S.stageDone = false;
   S.paused = false;
   S.spawnT = 1.3;
-  S.best = Store.get(bestKey(mode), 0) || 0;
+  S.best = bestOf(mode, S.grade);
   recentWords = [];
 
   for(var i=0;i<S.monsters.length;i++){
@@ -1786,13 +2126,25 @@ function startGame(mode){
   showPanelFor(null);
   elPanelIdle.textContent = '몬스터를 기다리는 중…';
 
-  banner(S.stage + '단계 시작!', S.mode === 'math' ? '수학 문제를 풀어라!' : (S.mode === 'word' ? '낱말을 맞혀라!' : '수학 + 낱말!'), 1500);
+  banner(S.stage + '단계 시작!', S.mode === 'word' ? '낱말을 맞혀라!' : ('초' + S.grade + ' 수학 문제를 풀어라!'), 1500);
   startLoop();
 }
 
 /* =========================================================
    start wiring
    ========================================================= */
+var gradeBtns = document.querySelectorAll('.g-btn');
+for(var gi=0;gi<gradeBtns.length;gi++){
+  (function(btn){
+    btn.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      Sfx.unlock();
+      setGrade(btn.getAttribute('data-grade'));
+      Sfx.tap();
+    });
+  })(gradeBtns[gi]);
+}
+
 var modeCards = document.querySelectorAll('.mode-card');
 for(var i=0;i<modeCards.length;i++){
   (function(card){
@@ -1823,7 +2175,7 @@ $('btnPause').addEventListener('pointerdown', function(ev){
   togglePause();
 });
 
-refreshTitleBests();
+setGrade(Store.get('gm_grade', 1));
 soundIcon();
 
 })();
