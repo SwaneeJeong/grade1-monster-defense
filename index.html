@@ -94,7 +94,7 @@ body{
   -webkit-touch-callout:none;}
 .crop-guide{position:absolute;pointer-events:none;border-radius:46% 46% 50% 50%;
   border:3px dashed rgba(255,255,255,.96);
-  box-shadow:0 0 0 9999px rgba(5,18,32,.66),
+  box-shadow:0 0 0 9999px rgba(5,18,32,.6),
              inset 0 0 0 2px rgba(90,190,255,.85),
              inset 0 0 26px rgba(120,205,255,.55),
              0 0 18px rgba(120,205,255,.6);}
@@ -561,7 +561,7 @@ body{
     <div class="crop-card">
       <h2 class="crop-title" id="cropTitle">✂️ 얼굴만 딱 맞춰 주세요</h2>
       <p class="crop-hint">손가락으로 밀어서 얼굴을 안에 넣고, 막대로 크기를 맞춰요</p>
-      <div class="crop-stage" id="cropStage">
+      <div class="crop-stage" id="cropStage" role="group" aria-label="사진을 밀어서 얼굴 위치 맞추기">
         <img class="crop-img" id="cropImg" alt="">
         <div class="crop-guide" id="cropGuide" aria-hidden="true"></div>
       </div>
@@ -2328,6 +2328,7 @@ function heroToast(msg){
    ========================================================= */
 var CROP_RW = 56, CROP_RH = 68;          /* .hero-head 비율 */
 var CROP_OUT_W = 180, CROP_OUT_H = 218;  /* 저장 크기 */
+var CROP_OVERSCAN = 1.1;                 /* 1.0x에서도 손가락으로 밀 여유 */
 
 var Crop = {
   modal: null, stage: null, img: null, guide: null, rng: null, valEl: null,
@@ -2425,7 +2426,7 @@ function cropOpen(file){
     Crop.modal.hidden = false;
     Crop.open = true;
     cropMeasure();
-    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih);
+    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih) * CROP_OVERSCAN;
     Crop.baseW = Crop.iw * Crop.cover;
     Crop.baseH = Crop.ih * Crop.cover;
     cropClamp(); cropRender(); cropSyncZoom();
@@ -2510,8 +2511,8 @@ function cropInit(){
   var bCancel = $('cropCancel'), bApply = $('cropApply'), bOut = $('cropZoomOut'), bIn = $('cropZoomIn');
   if(bCancel) bCancel.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); cropCancel(); });
   if(bApply) bApply.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); cropApply(); });
-  if(bOut) bOut.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale - 0.25); });
-  if(bIn) bIn.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale + 0.25); });
+  if(bOut) bOut.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale - 0.2); });
+  if(bIn) bIn.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale + 0.2); });
   if(Crop.rng) Crop.rng.addEventListener('input', function(){ cropZoomTo(parseFloat(Crop.rng.value)); });
 
   /* 끌기 + 두 손가락 확대 */
@@ -2580,7 +2581,7 @@ function cropInit(){
   window.addEventListener('resize', function(){
     if(!Crop.open || !Crop.iw) return;
     cropMeasure();
-    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih);
+    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih) * CROP_OVERSCAN;
     Crop.baseW = Crop.iw * Crop.cover;
     Crop.baseH = Crop.ih * Crop.cover;
     Crop.tx = 0; Crop.ty = 0;
