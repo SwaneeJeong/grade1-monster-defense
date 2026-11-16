@@ -64,12 +64,64 @@ body{
   cursor:pointer;box-shadow:0 3px 0 #ffdada;}
 .hp-reset:active{transform:translateY(2px);box-shadow:0 1px 0 #ffdada;}
 .hero-file{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;}
-.title-toast{position:absolute;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));z-index:30;
+.title-toast{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));z-index:320;
   transform:translate(-50%,8px);background:rgba(18,50,78,.93);color:#fff;font-weight:900;
   font-size:clamp(11px,3.3vw,14px);padding:8px 14px;border-radius:99px;white-space:nowrap;
   opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;
   box-shadow:0 6px 18px rgba(10,40,80,.3);}
 .title-toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* ---------- 얼굴 맞추기 (face crop) ---------- */
+.crop-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(9,29,50,.74);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  overscroll-behavior:contain;animation:cropFade .16s ease-out;}
+@keyframes cropFade{from{opacity:0;}to{opacity:1;}}
+.crop-card{width:100%;max-width:334px;background:linear-gradient(#ffffff,#f1f9ff);border-radius:24px;
+  padding:13px 13px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  box-shadow:0 18px 44px rgba(4,20,40,.5),0 0 0 2px rgba(255,255,255,.5);
+  animation:cropPop .2s cubic-bezier(.2,.9,.3,1.2);}
+@keyframes cropPop{from{transform:scale(.94);opacity:.6;}to{transform:scale(1);opacity:1;}}
+.crop-title{margin:0;font-size:clamp(15px,4.6vw,19px);font-weight:900;color:#12324e;text-align:center;line-height:1.2;
+  letter-spacing:-.3px;}
+.crop-hint{margin:-2px 0 1px;font-size:clamp(10px,3vw,12px);font-weight:800;color:#7191b4;text-align:center;line-height:1.35;}
+.crop-stage{position:relative;width:min(260px,calc(100vw - 60px));aspect-ratio:1/1;border-radius:18px;
+  overflow:hidden;background:#0d2237;touch-action:none;cursor:grab;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.16),0 6px 16px rgba(20,60,100,.25);}
+.crop-stage.grabbing{cursor:grabbing;}
+.crop-img{position:absolute;left:0;top:0;transform-origin:0 0;display:block;
+  max-width:none;pointer-events:none;-webkit-user-drag:none;-webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;}
+.crop-guide{position:absolute;pointer-events:none;border-radius:46% 46% 50% 50%;
+  border:3px dashed rgba(255,255,255,.96);
+  box-shadow:0 0 0 9999px rgba(5,18,32,.66),
+             inset 0 0 0 2px rgba(90,190,255,.85),
+             inset 0 0 26px rgba(120,205,255,.55),
+             0 0 18px rgba(120,205,255,.6);}
+.crop-zoom{display:flex;align-items:center;gap:6px;width:min(260px,calc(100vw - 60px));}
+.cz-ico{flex:0 0 auto;font-size:13px;line-height:1;}
+.cz-btn{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:2px solid #cfe3f8;background:#fff;
+  color:#2a5b96;font-family:inherit;font-weight:900;font-size:16px;line-height:1;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #dbe9f8;}
+.cz-btn:active{transform:translateY(2px);box-shadow:0 0 0 #dbe9f8;}
+.cz-range{flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,#4facfe,#2f7ff0);outline:none;margin:0;cursor:pointer;}
+.cz-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+  background:#fff;border:3px solid #2f7ff0;box-shadow:0 2px 6px rgba(20,70,130,.35);}
+.cz-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #2f7ff0;}
+.cz-val{flex:0 0 auto;min-width:34px;text-align:right;font-size:clamp(10px,3vw,12px);font-weight:900;color:#2a5b96;}
+.crop-btns{display:flex;gap:8px;width:100%;margin-top:1px;}
+.crop-btn{flex:1 1 0;border:0;border-radius:16px;padding:12px 8px;font-family:inherit;font-weight:900;
+  font-size:clamp(13px,3.9vw,16px);line-height:1.1;cursor:pointer;transition:transform .07s,box-shadow .07s;}
+.crop-btn.ghost{flex:0 0 34%;background:#eff6ff;color:#3a6ca8;box-shadow:0 4px 0 #d3e4f8;}
+.crop-btn.go{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;
+  box-shadow:0 5px 0 #1f5cb3,0 8px 18px rgba(47,127,240,.35);}
+.crop-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.12);}
+@media (max-height:700px){
+  .crop-stage{width:min(230px,calc(100vw - 60px));}
+  .crop-zoom{width:min(230px,calc(100vw - 60px));}
+  .crop-hint{display:none;}
+}
 
 /* ---------- grade selector ---------- */
 .grade-row{display:flex;align-items:center;gap:4px;width:100%;}
@@ -503,6 +555,29 @@ body{
   </section>
 
   <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ================= 얼굴 맞추기 ================= -->
+  <div class="crop-modal" id="cropModal" role="dialog" aria-modal="true" aria-labelledby="cropTitle" hidden>
+    <div class="crop-card">
+      <h2 class="crop-title" id="cropTitle">✂️ 얼굴만 딱 맞춰 주세요</h2>
+      <p class="crop-hint">손가락으로 밀어서 얼굴을 안에 넣고, 막대로 크기를 맞춰요</p>
+      <div class="crop-stage" id="cropStage">
+        <img class="crop-img" id="cropImg" alt="">
+        <div class="crop-guide" id="cropGuide" aria-hidden="true"></div>
+      </div>
+      <div class="crop-zoom">
+        <span class="cz-ico" aria-hidden="true">🔍</span>
+        <button class="cz-btn" id="cropZoomOut" type="button" aria-label="축소">−</button>
+        <input class="cz-range" id="cropZoom" type="range" min="1" max="4" step="0.01" value="1" aria-label="사진 확대·축소">
+        <button class="cz-btn" id="cropZoomIn" type="button" aria-label="확대">+</button>
+        <span class="cz-val" id="cropZoomVal">1.0x</span>
+      </div>
+      <div class="crop-btns">
+        <button class="crop-btn ghost" id="cropCancel" type="button">취소</button>
+        <button class="crop-btn go" id="cropApply" type="button">이대로 적용!</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2199,7 +2274,7 @@ function togglePause(){
    hero photo  (100% 기기 안에서만 — 어디에도 올리지 않는다)
    ========================================================= */
 var PHOTO_KEY = 'gm_hero_photo';
-var PHOTO_SIZE = 180;
+var PHOTO_SIZE = 180; /* 옛 저장 크기(호환용) */
 
 function heroPhotoUrl(){
   var v = Store.get(PHOTO_KEY, '');
@@ -2247,41 +2322,277 @@ function heroToast(msg){
   heroToast._t = setTimeout(function(){ t.classList.remove('show'); }, 2300);
 }
 
-/* 고른 사진을 정사각형으로 가운데 잘라 180x180 JPEG(0.85)로 줄여 저장 */
+/* =========================================================
+   ✂️ 얼굴 맞추기 (face crop)
+   고른 사진을 .hero-head(56:68) 모양 타원 안에 직접 맞춰 자른다
+   ========================================================= */
+var CROP_RW = 56, CROP_RH = 68;          /* .hero-head 비율 */
+var CROP_OUT_W = 180, CROP_OUT_H = 218;  /* 저장 크기 */
+
+var Crop = {
+  modal: null, stage: null, img: null, guide: null, rng: null, valEl: null,
+  open: false, iw: 0, ih: 0, cover: 1, baseW: 0, baseH: 0,
+  scale: 1, tx: 0, ty: 0,
+  size: 260, gw: 0, gh: 0, gx: 0, gy: 0, px: 0, py: 0, k: 1,
+  url: '', ptrs: [], lastDist: 0, prevFocus: null
+};
+
+function cropResetInput(){
+  var inp = $('heroPhotoInput');
+  if(inp){ try{ inp.value = ''; }catch(e){} }
+}
+
+/* 타원 가이드 크기 맞추기 (무대 크기에 맞춰 비율 유지) */
+function cropMeasure(){
+  if(!Crop.stage || !Crop.guide) return;
+  var s = Crop.stage.clientWidth || 260;
+  Crop.size = s;
+  Crop.gh = Math.round(Math.min(s - 22, s * 0.84));
+  Crop.gw = Math.round(Crop.gh * CROP_RW / CROP_RH);
+  Crop.gx = Math.round((s - Crop.gw) / 2);
+  Crop.gy = Math.round((s - Crop.gh) / 2);
+  Crop.guide.style.left = Crop.gx + 'px';
+  Crop.guide.style.top = Crop.gy + 'px';
+  Crop.guide.style.width = Crop.gw + 'px';
+  Crop.guide.style.height = Crop.gh + 'px';
+}
+
+/* 무대 안에서 사진이 차지하는 위치·배율 */
+function cropRender(){
+  if(!Crop.img) return;
+  var s = Crop.scale;
+  var w = Crop.baseW * s, h = Crop.baseH * s;
+  var px = (Crop.size - w) / 2 + Crop.tx;
+  var py = (Crop.size - h) / 2 + Crop.ty;
+  Crop.px = px; Crop.py = py;
+  Crop.k = Crop.cover * s;                 /* 원본 픽셀 → 무대 픽셀 */
+  Crop.img.style.width = Crop.baseW + 'px';
+  Crop.img.style.height = Crop.baseH + 'px';
+  Crop.img.style.transform = 'translate(' + px + 'px,' + py + 'px) scale(' + s + ')';
+}
+
+/* 타원 밖으로 사진이 빠져나가지 않게 */
+function cropClamp(){
+  var s = Crop.scale;
+  var mw = Math.max(0, (Crop.baseW * s - Crop.gw) / 2);
+  var mh = Math.max(0, (Crop.baseH * s - Crop.gh) / 2);
+  Crop.tx = clamp(Crop.tx, -mw, mw);
+  Crop.ty = clamp(Crop.ty, -mh, mh);
+}
+
+function cropSyncZoom(){
+  var s = Crop.scale;
+  if(Crop.rng) Crop.rng.value = String(Math.round(s * 100) / 100);
+  if(Crop.valEl) Crop.valEl.textContent = (Math.round(s * 10) / 10).toFixed(1) + 'x';
+}
+
+/* (lx,ly) 지점을 고정한 채 목표 배율로 */
+function cropZoomTo(target, lx, ly){
+  target = clamp(target, 1, 4);
+  if(lx === undefined || lx === null){ lx = Crop.size / 2; ly = Crop.size / 2; }
+  if(Math.abs(target - Crop.scale) < 0.0005) return;
+  var r = (Crop.cover * target) / (Crop.cover * Crop.scale);
+  var pxNew = lx - (lx - Crop.px) * r;
+  var pyNew = ly - (ly - Crop.py) * r;
+  Crop.scale = target;
+  Crop.tx = pxNew - (Crop.size - Crop.baseW * target) / 2;
+  Crop.ty = pyNew - (Crop.size - Crop.baseH * target) / 2;
+  cropClamp(); cropRender(); cropSyncZoom();
+}
+
+function cropStagePoint(ev){
+  var r = Crop.stage.getBoundingClientRect();
+  return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+}
+
+function cropOpen(file){
+  if(!Crop.modal || !Crop.stage || !Crop.img) return;
+  var url;
+  try{ url = URL.createObjectURL(file); }catch(e){ heroToast('사진을 읽지 못했어요'); cropResetInput(); return; }
+  var probe = new Image();
+  var done = false;
+  probe.onload = function(){
+    if(done) return; done = true;
+    var iw = probe.naturalWidth || probe.width || 0;
+    var ih = probe.naturalHeight || probe.height || 0;
+    if(!iw || !ih){ heroToast('사진을 읽지 못했어요'); try{ URL.revokeObjectURL(url); }catch(e){} cropResetInput(); return; }
+    Crop.iw = iw; Crop.ih = ih;
+    Crop.url = url;
+    Crop.img.src = url;
+    Crop.scale = 1; Crop.tx = 0; Crop.ty = 0;
+    Crop.ptrs = []; Crop.lastDist = 0;
+    Crop.prevFocus = document.activeElement;
+    Crop.modal.hidden = false;
+    Crop.open = true;
+    cropMeasure();
+    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih);
+    Crop.baseW = Crop.iw * Crop.cover;
+    Crop.baseH = Crop.ih * Crop.cover;
+    cropClamp(); cropRender(); cropSyncZoom();
+    Sfx.unlock(); Sfx.tap();
+    try{ $('cropApply').focus(); }catch(e){}
+  };
+  probe.onerror = function(){
+    if(done) return; done = true;
+    heroToast('사진을 읽지 못했어요');
+    try{ URL.revokeObjectURL(url); }catch(e){}
+    cropResetInput();
+  };
+  probe.src = url;
+}
+
+function cropClose(){
+  if(!Crop.modal) return;
+  Crop.modal.hidden = true;
+  Crop.open = false;
+  Crop.ptrs = []; Crop.lastDist = 0;
+  if(Crop.url){ try{ URL.revokeObjectURL(Crop.url); }catch(e){} Crop.url = ''; }
+  try{ Crop.img.removeAttribute('src'); }catch(e){}
+  if(Crop.stage) Crop.stage.classList.remove('grabbing');
+  cropResetInput();
+  var f = Crop.prevFocus; Crop.prevFocus = null;
+  if(f && f.focus){ try{ f.focus(); }catch(e){} }
+}
+
+function cropCancel(){
+  cropClose();
+  Sfx.tap();
+}
+
+/* 타원 안에 보이는 그대로를 180x218 JPEG(0.88)로 잘라 저장 */
+function cropApply(){
+  if(!Crop.open || !Crop.iw || !Crop.ih) return;
+  try{
+    var sx = (Crop.gx - Crop.px) / Crop.k;
+    var sy = (Crop.gy - Crop.py) / Crop.k;
+    var sw = Crop.gw / Crop.k;
+    var sh = Crop.gh / Crop.k;
+
+    var x0 = Math.max(0, sx), y0 = Math.max(0, sy);
+    var x1 = Math.min(Crop.iw, sx + sw), y1 = Math.min(Crop.ih, sy + sh);
+    if(x1 - x0 < 2 || y1 - y0 < 2){ heroToast('사진을 읽지 못했어요'); return; }
+
+    var cv = document.createElement('canvas');
+    cv.width = CROP_OUT_W;
+    cv.height = CROP_OUT_H;
+    var cx = cv.getContext('2d');
+    cx.fillStyle = '#ffffff';
+    cx.fillRect(0, 0, CROP_OUT_W, CROP_OUT_H);
+    cx.imageSmoothingEnabled = true;
+    if('imageSmoothingQuality' in cx) cx.imageSmoothingQuality = 'high';
+
+    var dxs = CROP_OUT_W / sw, dys = CROP_OUT_H / sh;
+    cx.drawImage(Crop.img,
+      x0, y0, x1 - x0, y1 - y0,
+      (x0 - sx) * dxs, (y0 - sy) * dys, (x1 - x0) * dxs, (y1 - y0) * dys);
+
+    var url = cv.toDataURL('image/jpeg', 0.88);
+    if(!url || url.indexOf('data:image/jpeg') !== 0){ heroToast('사진을 저장하지 못했어요'); return; }
+    if(!Store.set(PHOTO_KEY, url)){ heroToast('사진을 저장하지 못했어요 (저장 공간 부족)'); return; }
+    applyHeroPhoto(url);
+    cropClose();
+    Sfx.correct(3);
+    heroToast('얼굴 맞췄어요! 미사일 발사 준비 🚀');
+  }catch(e){
+    heroToast('사진을 저장하지 못했어요');
+  }
+}
+
+function cropInit(){
+  Crop.modal = $('cropModal');
+  Crop.stage = $('cropStage');
+  Crop.img = $('cropImg');
+  Crop.guide = $('cropGuide');
+  Crop.rng = $('cropZoom');
+  Crop.valEl = $('cropZoomVal');
+  if(!Crop.modal || !Crop.stage || !Crop.img) return;
+
+  var bCancel = $('cropCancel'), bApply = $('cropApply'), bOut = $('cropZoomOut'), bIn = $('cropZoomIn');
+  if(bCancel) bCancel.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); cropCancel(); });
+  if(bApply) bApply.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); cropApply(); });
+  if(bOut) bOut.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale - 0.25); });
+  if(bIn) bIn.addEventListener('click', function(ev){ ev.preventDefault(); cropZoomTo(Crop.scale + 0.25); });
+  if(Crop.rng) Crop.rng.addEventListener('input', function(){ cropZoomTo(parseFloat(Crop.rng.value)); });
+
+  /* 끌기 + 두 손가락 확대 */
+  Crop.stage.addEventListener('pointerdown', function(ev){
+    if(!Crop.open) return;
+    ev.preventDefault();
+    try{ Crop.stage.setPointerCapture(ev.pointerId); }catch(e){}
+    Crop.ptrs.push({ id: ev.pointerId, x: ev.clientX, y: ev.clientY });
+    Crop.stage.classList.add('grabbing');
+    if(Crop.ptrs.length === 2){
+      var a = Crop.ptrs[0], b = Crop.ptrs[1];
+      Crop.lastDist = Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+    }
+  });
+
+  Crop.stage.addEventListener('pointermove', function(ev){
+    if(!Crop.open) return;
+    var i = -1;
+    for(var j=0;j<Crop.ptrs.length;j++){ if(Crop.ptrs[j].id === ev.pointerId){ i = j; break; } }
+    if(i < 0) return;
+    var p = Crop.ptrs[i];
+    var dx = ev.clientX - p.x, dy = ev.clientY - p.y;
+    p.x = ev.clientX; p.y = ev.clientY;
+    ev.preventDefault();
+    if(Crop.ptrs.length >= 2){
+      var a = Crop.ptrs[0], b = Crop.ptrs[1];
+      var d = Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+      var pt = cropStagePoint(ev);
+      if(Crop.lastDist > 0 && d > 0) cropZoomTo(Crop.scale * (d / Crop.lastDist), pt.x, pt.y);
+      Crop.lastDist = d;
+      Crop.tx += dx / 2; Crop.ty += dy / 2;
+    } else {
+      Crop.tx += dx; Crop.ty += dy;
+    }
+    cropClamp(); cropRender();
+  });
+
+  function ptrEnd(ev){
+    for(var j=0;j<Crop.ptrs.length;j++){
+      if(Crop.ptrs[j].id === ev.pointerId){ Crop.ptrs.splice(j, 1); break; }
+    }
+    Crop.lastDist = 0;
+    if(!Crop.ptrs.length) Crop.stage.classList.remove('grabbing');
+    try{ Crop.stage.releasePointerCapture(ev.pointerId); }catch(e){}
+  }
+  Crop.stage.addEventListener('pointerup', ptrEnd);
+  Crop.stage.addEventListener('pointercancel', ptrEnd);
+
+  Crop.stage.addEventListener('wheel', function(ev){
+    if(!Crop.open) return;
+    ev.preventDefault();
+    var pt = cropStagePoint(ev);
+    cropZoomTo(Crop.scale * (ev.deltaY < 0 ? 1.08 : 0.925), pt.x, pt.y);
+  }, { passive: false });
+
+  /* 바깥(어두운 곳) 누르면 취소 */
+  Crop.modal.addEventListener('pointerdown', function(ev){
+    if(ev.target === Crop.modal) cropCancel();
+  });
+
+  document.addEventListener('keydown', function(ev){
+    if(!Crop.open) return;
+    if(ev.key === 'Escape'){ ev.preventDefault(); cropCancel(); }
+  });
+
+  window.addEventListener('resize', function(){
+    if(!Crop.open || !Crop.iw) return;
+    cropMeasure();
+    Crop.cover = Math.max(Crop.gw / Crop.iw, Crop.gh / Crop.ih);
+    Crop.baseW = Crop.iw * Crop.cover;
+    Crop.baseH = Crop.ih * Crop.cover;
+    Crop.tx = 0; Crop.ty = 0;
+    cropClamp(); cropRender(); cropSyncZoom();
+  });
+}
+
+/* 고른 사진 → 얼굴 맞추기 창 */
 function readHeroPhotoFile(file){
   if(!file) return;
-  if(file.type && file.type.indexOf('image/') !== 0){ heroToast('사진 파일만 넣을 수 있어요'); return; }
-  var rd = new FileReader();
-  rd.onload = function(){
-    var img = new Image();
-    img.onload = function(){
-      try{
-        var cv = document.createElement('canvas');
-        cv.width = PHOTO_SIZE;
-        cv.height = PHOTO_SIZE;
-        var cx = cv.getContext('2d');
-        cx.fillStyle = '#ffffff';
-        cx.fillRect(0, 0, PHOTO_SIZE, PHOTO_SIZE);
-        var iw = img.naturalWidth || img.width || PHOTO_SIZE;
-        var ih = img.naturalHeight || img.height || PHOTO_SIZE;
-        var side = Math.min(iw, ih);
-        var sx = (iw - side) / 2;
-        var sy = clamp((ih - side) / 2 - side * 0.05, 0, Math.max(0, ih - side));
-        cx.drawImage(img, sx, sy, side, side, 0, 0, PHOTO_SIZE, PHOTO_SIZE);
-        var url = cv.toDataURL('image/jpeg', 0.85);
-        if(!Store.set(PHOTO_KEY, url)){ heroToast('사진을 저장하지 못했어요 (저장 공간 부족)'); return; }
-        applyHeroPhoto(url);
-        Sfx.correct(3);
-        heroToast('주인공 사진 완료! 미사일 발사 준비 🚀');
-      }catch(e){
-        heroToast('사진을 읽지 못했어요');
-      }
-    };
-    img.onerror = function(){ heroToast('사진을 읽지 못했어요'); };
-    img.src = rd.result;
-  };
-  rd.onerror = function(){ heroToast('사진을 읽지 못했어요'); };
-  rd.readAsDataURL(file);
+  if(file.type && file.type.indexOf('image/') !== 0){ heroToast('사진 파일만 넣을 수 있어요'); cropResetInput(); return; }
+  cropOpen(file);
 }
 
 /* =========================================================
@@ -2438,10 +2749,11 @@ if(btnHeroPhoto && heroFileInput){
   });
   heroFileInput.addEventListener('change', function(){
     var f = (heroFileInput.files && heroFileInput.files[0]) || null;
+    if(!f){ return; }
     readHeroPhotoFile(f);
-    try{ heroFileInput.value = ''; }catch(e){}
   });
 }
+cropInit();
 var btnHeroReset = $('btnHeroReset');
 if(btnHeroReset){
   btnHeroReset.addEventListener('click', function(ev){
