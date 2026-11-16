@@ -75,7 +75,7 @@ body{
   box-shadow:0 0 10px #ffd15c;opacity:.95;}
 .hero{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);font-size:clamp(24px,8.4vw,44px);
   filter:drop-shadow(0 3px 3px rgba(0,0,0,.18));animation:bob 1.4s ease-in-out infinite;pointer-events:none;}
-.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5;}
 
 .monster{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;
   cursor:pointer;animation:spawnIn .28s ease-out;}
@@ -105,6 +105,28 @@ body{
   text-shadow:0 2px 0 #fff,0 0 8px rgba(255,255,255,.9);font-size:clamp(13px,4.2vw,20px);pointer-events:none;}
 .flt.big{color:#e0341f;font-size:clamp(15px,5vw,24px);}
 .muzzle{position:absolute;transform:translate(-50%,-50%);font-size:clamp(14px,4.4vw,22px);pointer-events:none;}
+
+/* ---------- missile & impact fx ---------- */
+.missile{position:absolute;width:clamp(13px,3.8vw,18px);height:clamp(13px,3.8vw,18px);border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;will-change:left,top;
+  background:radial-gradient(circle at 50% 50%,#fff 0%,#fff5b0 25%,#ffbe2e 55%,rgba(255,90,0,0) 78%);
+  box-shadow:0 0 12px 4px rgba(255,196,80,.9),0 0 30px 12px rgba(255,110,0,.45);}
+.missile::after{content:'';position:absolute;inset:-48%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,244,190,.55),rgba(255,160,40,0) 70%);
+  animation:corePulse .16s ease-in-out infinite alternate;}
+.streak{position:absolute;height:clamp(5px,1.8vw,8px);border-radius:99px;pointer-events:none;will-change:left,top,transform;
+  transform:translate(-50%,-50%);transform-origin:50% 50%;
+  background:linear-gradient(90deg,rgba(255,60,0,0),#ff7a12 38%,#ffc93c 72%,#fffbe6 100%);
+  filter:blur(.6px);box-shadow:0 0 12px rgba(255,150,40,.85);}
+.mtrail{position:absolute;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.shock{position:absolute;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
+  border:3px solid #fff;box-shadow:0 0 16px #ffd34d,0 0 32px rgba(255,120,20,.85);}
+.flashw{position:absolute;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;will-change:transform;
+  background:radial-gradient(circle,#fff 0%,rgba(255,255,255,.9) 30%,rgba(255,236,150,.45) 56%,rgba(255,180,60,0) 74%);}
+.monster.impact .body{animation:impactBody .3s cubic-bezier(.2,.85,.3,1);}
+.monster.pending .bubble{opacity:.5;border-color:#9cc7f0;box-shadow:0 2px 0 #dbe9f8;}
+.monster.pending::after{content:'💫';position:absolute;right:-8px;top:-6px;font-size:clamp(10px,3vw,15px);
+  animation:pulse .6s ease-in-out infinite;}
 
 .banner{position:absolute;left:0;right:0;top:30%;display:flex;flex-direction:column;align-items:center;gap:5px;
   pointer-events:none;opacity:0;z-index:20;}
@@ -179,8 +201,9 @@ body{
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.24);opacity:.75}}
 @keyframes spawnIn{from{opacity:0;transform:translate(-50%,-50%) scale(.4)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes diePop{0%{transform:translate(-50%,-50%) scale(1);opacity:1}
-  45%{transform:translate(-50%,-50%) scale(1.35) rotate(12deg);opacity:1}
-  100%{transform:translate(-50%,-120%) scale(.15) rotate(-30deg);opacity:0}}
+  14%{transform:translate(-50%,-66%) scale(1.28,.78) rotate(-4deg);opacity:1}
+  45%{transform:translate(-50%,-62%) scale(1.5,.86) rotate(12deg);opacity:1}
+  100%{transform:translate(-50%,-135%) scale(.15) rotate(-32deg);opacity:0}}
 @keyframes fadeOut{to{opacity:0;transform:translate(-50%,-50%) scale(.6)}}
 @keyframes hitFlash{0%,100%{filter:none}50%{filter:brightness(3) saturate(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}
@@ -189,9 +212,20 @@ body{
   28%{transform:scale(1)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
 @keyframes popIn{from{opacity:0;transform:scale(.86) translateY(10px)}to{opacity:1;transform:none}}
 @keyframes confFall{from{transform:translateY(-20px) rotate(0)}to{transform:translateY(115vh) rotate(720deg)}}
-@keyframes screenShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-6px,3px)}
-  50%{transform:translate(5px,-3px)}75%{transform:translate(-3px,-2px)}}
-.shaking{animation:screenShake .3s ease;}
+@keyframes screenShake{0%,100%{transform:translate(0,0)}
+  10%{transform:translate(var(--skx,-6px),calc(var(--sky,3px) * -1))}
+  30%{transform:translate(calc(var(--skx,-6px) * -.88),var(--sky,3px))}
+  50%{transform:translate(calc(var(--skx,-6px) * .62),calc(var(--sky,3px) * -.72))}
+  70%{transform:translate(calc(var(--skx,-6px) * -.44),calc(var(--sky,3px) * .5))}
+  88%{transform:translate(calc(var(--skx,-6px) * .24),calc(var(--sky,3px) * -.26))}}
+.shaking{animation:screenShake var(--skd,.3s) ease-out;}
+@keyframes corePulse{from{opacity:.55;transform:scale(.9)}to{opacity:1;transform:scale(1.14)}}
+@keyframes impactBody{
+  0%{transform:scale(1,1);filter:none}
+  16%{transform:scale(1.5,.55) translateY(14%);filter:brightness(3.2) saturate(0)}
+  42%{transform:scale(.76,1.34) translateY(-12%);filter:brightness(2.1) saturate(.5)}
+  66%{transform:scale(1.14,.9) translateY(-3%)}
+  100%{transform:scale(1,1);filter:none}}
 </style>
 </head>
 <body>
@@ -371,6 +405,36 @@ var Sfx = (function(){
     }catch(e){}
   }
 
+  function noise(o){
+    if(muted) return;
+    var c = ensure();
+    if(!c) return;
+    try{
+      var dur = o.dur || 0.16;
+      var len = Math.max(1, Math.floor(c.sampleRate * dur));
+      var buf = c.createBuffer(1, len, c.sampleRate);
+      var data = buf.getChannelData(0);
+      for(var i=0;i<len;i++){
+        var env = 1 - (i / len);
+        data[i] = (Math.random()*2 - 1) * env * env;
+      }
+      var src = c.createBufferSource();
+      src.buffer = buf;
+      var filt = c.createBiquadFilter();
+      filt.type = o.filter || 'lowpass';
+      filt.frequency.setValueAtTime(o.freq || 1400, c.currentTime);
+      if(o.to) filt.frequency.exponentialRampToValueAtTime(Math.max(60, o.to), c.currentTime + dur);
+      var q = c.createGain();
+      var t0 = c.currentTime + (o.delay || 0);
+      q.gain.setValueAtTime(0.0001, t0);
+      q.gain.exponentialRampToValueAtTime(o.vol == null ? 0.09 : o.vol, t0 + 0.008);
+      q.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      src.connect(filt); filt.connect(q); q.connect(c.destination);
+      src.start(t0);
+      src.stop(t0 + dur + 0.02);
+    }catch(e){}
+  }
+
   return {
     unlock: function(){ ensure(); },
     muted: function(){ return muted; },
@@ -383,6 +447,23 @@ var Sfx = (function(){
     },
     wrong: function(){ tone({freq:210, to:120, dur:0.2, type:'square', vol:0.07}); },
     hit: function(){ tone({freq:340, to:90, dur:0.17, type:'sawtooth', vol:0.09}); },
+    /* 발사: 숨을 모아 폭발시키는 듯한 퓨- 슈욱 */
+    launch: function(){
+      tone({freq:820, to:280, dur:0.19, type:'triangle', vol:0.07});
+      tone({freq:1650, to:520, dur:0.10, type:'sawtooth', vol:0.03, delay:0.02});
+      noise({dur:0.17, freq:2400, to:600, filter:'bandpass', vol:0.05});
+    },
+    /* 명중: 저음을 찍어 누르는 펑 + 펑크나는 팝 */
+    impact: function(power){
+      var p = power || 1;
+      tone({freq:175, to:44, dur:0.26, type:'sine', vol:0.17 * p});
+      tone({freq:88, to:34, dur:0.32, type:'triangle', vol:0.10 * p});
+      noise({dur:0.17, freq:2000, to:220, filter:'lowpass', vol:0.10 * p});
+      if(p > 1.2){
+        tone({freq:330, to:80, dur:0.2, type:'square', vol:0.06});
+        noise({dur:0.24, freq:900, to:120, filter:'lowpass', vol:0.07, delay:0.03});
+      }
+    },
     bossHit: function(){ tone({freq:190, to:70, dur:0.22, type:'square', vol:0.1}); },
     bossAppear: function(){
       tone({freq:196, dur:0.26, type:'square', vol:0.09, delay:0});
@@ -576,7 +657,9 @@ var S = {
   paused: false,
   ts: 0,
   spawnT: 0,
-  modeType: 'math'
+  modeType: 'math',
+  missiles: [],
+  hitStop: 0
 };
 
 var BOSSES = [
@@ -721,46 +804,187 @@ function floatText(x, y, text, cls){
   }catch(e){ setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 800); }
 }
 
-function fireLaser(m){
-  var fr = fieldRect();
-  var sx = heroPoint().x;
-  var sy = heroPoint().y;
-  var ex = fr.width * m.x;
-  var ey = fr.height * m.y;
+/* =========================================================
+   missile flight & impact
+   ========================================================= */
+var MISSILE_DUR = 0.40;   // 비행 시간(초)
 
-  var mz = document.createElement('div');
-  mz.className = 'muzzle';
-  mz.style.left = sx + 'px';
-  mz.style.top = sy + 'px';
-  mz.textContent = '💫';
-  elFx.appendChild(mz);
-  try{
-    var a0 = mz.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:1},{transform:'translate(-50%,-50%) scale(2)',opacity:0}],{duration:240});
-    a0.onfinish = function(){ if(mz.parentNode) mz.parentNode.removeChild(mz); };
-  }catch(e){ setTimeout(function(){ if(mz.parentNode) mz.parentNode.removeChild(mz); },260); }
+function fxNode(cls, x, y, w, h){
+  var d = document.createElement('div');
+  d.className = cls;
+  d.style.left = x + 'px';
+  d.style.top = y + 'px';
+  if(w){ d.style.width = w + 'px'; d.style.height = (h || w) + 'px'; }
+  elFx.appendChild(d);
+  return d;
+}
 
-  var proj = document.createElement('div');
-  proj.className = 'p';
-  proj.style.left = sx + 'px';
-  proj.style.top = sy + 'px';
-  proj.style.fontSize = 'clamp(14px,4vw,22px)';
-  proj.textContent = '⭐';
-  elFx.appendChild(proj);
-  var dx = ex - sx, dy = ey - sy;
+function fxAnim(node, frames, dur, easing, delay){
   try{
-    var a1 = proj.animate(
-      [ { transform:'translate(-50%,-50%) scale(.5) rotate(0deg)', opacity:1 },
-        { transform:'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(1.5) rotate(420deg)', opacity:1 } ],
-      { duration: 170, easing:'ease-in' }
-    );
-    a1.onfinish = function(){
-      if(proj.parentNode) proj.parentNode.removeChild(proj);
-      burst(ex, ey, { count: 10, dist: 55, size: 16 });
-    };
+    var a = node.animate(frames, { duration: dur, easing: easing || 'ease-out', delay: delay || 0, fill: 'both' });
+    a.onfinish = function(){ if(node.parentNode) node.parentNode.removeChild(node); };
+    return a;
   }catch(e){
-    setTimeout(function(){ if(proj.parentNode) proj.parentNode.removeChild(proj); }, 200);
-    burst(ex, ey, { count: 10, dist: 55, size: 16 });
+    setTimeout(function(){ if(node.parentNode) node.parentNode.removeChild(node); }, (dur || 300) + (delay || 0) + 60);
+    return null;
   }
+}
+
+function shockRing(x, y, size, dur, delay, color){
+  var r = fxNode('shock', x, y, size);
+  if(color){ r.style.borderColor = color; r.style.boxShadow = '0 0 14px ' + color + ',0 0 26px rgba(255,140,30,.7)'; }
+  fxAnim(r, [
+    { transform:'translate(-50%,-50%) scale(.22)', opacity:.95 },
+    { transform:'translate(-50%,-50%) scale(1.05)', opacity:.8, offset:.55 },
+    { transform:'translate(-50%,-50%) scale(1.45)', opacity:0 }
+  ], dur, 'cubic-bezier(.15,.72,.28,1)', delay);
+}
+
+function monsterPoint(m){
+  var fr = fieldRect();
+  return { x: fr.width * m.x, y: fr.height * m.y };
+}
+
+function launchFx(sx, sy){
+  var fl = fxNode('flashw', sx, sy, 72);
+  fxAnim(fl, [
+    { transform:'translate(-50%,-50%) scale(.3)', opacity:1 },
+    { transform:'translate(-50%,-50%) scale(1.75)', opacity:0 }
+  ], 260);
+  shockRing(sx, sy, 44, 320, 0, '#ffe066');
+  burst(sx, sy, { count: 7, dist: 34, size: 14, chars:['✨','💫','⭐'] });
+}
+
+function trailDot(x, y, ang){
+  var d = document.createElement('div');
+  d.className = 'mtrail';
+  var sz = 4 + Math.random() * 5;
+  d.style.left = (x + (Math.random()*9 - 4.5)) + 'px';
+  d.style.top = (y + (Math.random()*9 - 4.5)) + 'px';
+  d.style.width = sz.toFixed(1) + 'px';
+  d.style.height = sz.toFixed(1) + 'px';
+  var warm = Math.random();
+  d.style.background = warm < 0.45 ? '#fff6b0' : (warm < 0.8 ? '#ffb01f' : '#ff7a1a');
+  d.style.boxShadow = '0 0 ' + (6 + Math.random()*9).toFixed(0) + 'px rgba(255,160,40,.9)';
+  elFx.appendChild(d);
+  var back = ang + 180 + (Math.random()*46 - 23);
+  var rad = back * Math.PI / 180;
+  var dist = 10 + Math.random() * 24;
+  var bx = Math.cos(rad) * dist, by = Math.sin(rad) * dist;
+  fxAnim(d, [
+    { transform:'translate(-50%,-50%) scale(1)', opacity:.95 },
+    { transform:'translate(calc(-50% + ' + bx.toFixed(1) + 'px), calc(-50% + ' + by.toFixed(1) + 'px)) scale(.15)', opacity:0 }
+  ], 280 + Math.random()*220);
+}
+
+function impactFx(x, y, power){
+  var p = power || 1;
+  var fr = fieldRect();
+  var base = clamp(Math.min(fr.width, fr.height) * 0.34, 72, 168) * p;
+
+  var fl = fxNode('flashw', x, y, base * 0.95);
+  fxAnim(fl, [
+    { transform:'translate(-50%,-50%) scale(.35)', opacity:1 },
+    { transform:'translate(-50%,-50%) scale(1.05)', opacity:.85, offset:.35 },
+    { transform:'translate(-50%,-50%) scale(1.5)', opacity:0 }
+  ], 250);
+
+  shockRing(x, y, base * 0.6, 430, 0, '#ffffff');
+  shockRing(x, y, base * 0.85, 500, 55, '#ffd34d');
+
+  burst(x, y, { count: Math.round(16 * p) + 2, dist: 92 * p, size: 17, chars:['💥','⭐','✨','🔥','💫'] });
+  burst(x, y, { count: 5, dist: 44, size: 24, chars:['💥'] });
+}
+
+function fireLaser(m){
+  var hp = heroPoint();
+  var tp = monsterPoint(m);
+  launchFx(hp.x, hp.y);
+  Sfx.launch();
+
+  var core = fxNode('missile', hp.x, hp.y);
+  var streak = fxNode('streak', hp.x, hp.y);
+  streak.style.width = 'clamp(26px,9vw,48px)';
+
+  S.missiles.push({
+    m: m,
+    el: core, st: streak,
+    x0: hp.x, y0: hp.y,
+    x: hp.x, y: hp.y,
+    tx: tp.x, ty: tp.y,
+    t: 0, dur: MISSILE_DUR,
+    acc: 0,
+    ang: Math.atan2(tp.y - hp.y, tp.x - hp.x) * 180 / Math.PI,
+    arc: clamp(Math.abs(tp.y - hp.y) * 0.18, 14, 64)
+  });
+}
+
+function clearMissiles(){
+  for(var i=0;i<S.missiles.length;i++){
+    var ms = S.missiles[i];
+    if(!ms) continue;
+    ms.done = true;
+    if(ms.el && ms.el.parentNode) ms.el.parentNode.removeChild(ms.el);
+    if(ms.st && ms.st.parentNode) ms.st.parentNode.removeChild(ms.st);
+  }
+  S.missiles = [];
+  S.hitStop = 0;
+}
+
+function updateMissiles(dt){
+  if(!S.missiles.length) return;
+  var fr = fieldRect();
+  var list = S.missiles.slice();
+  for(var i = 0; i < list.length; i++){
+    var ms = list[i];
+    if(!ms || ms.done) continue;
+    ms.t += dt;
+    var p = ms.t / ms.dur;
+    if(p > 1) p = 1;
+    var e = Math.pow(p, 1.45);          // 살짝 가속하며 날아간다
+
+    var tx = ms.tx, ty = ms.ty;
+    if(ms.m && !ms.m.dead){
+      tx = fr.width * ms.m.x;
+      ty = fr.height * ms.m.y;
+      ms.tx = tx; ms.ty = ty;
+    }
+    var nx = ms.x0 + (tx - ms.x0) * e;
+    var ny = ms.y0 + (ty - ms.y0) * e - Math.sin(Math.PI * p) * ms.arc;
+
+    var ddx = nx - ms.x, ddy = ny - ms.y;
+    if(ddx || ddy) ms.ang = Math.atan2(ddy, ddx) * 180 / Math.PI;
+    ms.x = nx; ms.y = ny;
+    if(ms.el){ ms.el.style.left = nx + 'px'; ms.el.style.top = ny + 'px'; }
+
+    if(ms.st){
+      var rad = ms.ang * Math.PI / 180;
+      ms.st.style.left = (nx - Math.cos(rad) * 17) + 'px';
+      ms.st.style.top = (ny - Math.sin(rad) * 17) + 'px';
+      ms.st.style.transform = 'translate(-50%,-50%) rotate(' + ms.ang.toFixed(1) + 'deg)';
+      ms.st.style.opacity = (0.4 + p * 0.6).toFixed(2);
+    }
+
+    ms.acc += dt;
+    while(ms.acc >= 0.024){
+      ms.acc -= 0.024;
+      trailDot(nx, ny, ms.ang);
+    }
+
+    if(p >= 1){
+      ms.done = true;
+      if(ms.el && ms.el.parentNode) ms.el.parentNode.removeChild(ms.el);
+      if(ms.st && ms.st.parentNode) ms.st.parentNode.removeChild(ms.st);
+      resolveHit(ms);
+    }
+  }
+
+  // 끝난 미사일 정리 (resolveHit 안의 clearMissiles 가 배열을 바꿨을 수 있다)
+  var keep = [];
+  for(var j=0;j<S.missiles.length;j++){
+    if(S.missiles[j] && !S.missiles[j].done) keep.push(S.missiles[j]);
+  }
+  S.missiles = keep;
 }
 
 function banner(main, sub, ms){
@@ -786,12 +1010,17 @@ function banner(main, sub, ms){
   }, ms || 1900);
 }
 
-function shakeScreen(){
+function shakeScreen(power){
   var app = document.getElementById('app');
+  var p = clamp(power || 1, 0.5, 2);
+  app.style.setProperty('--skx', (-6 * p).toFixed(1) + 'px');
+  app.style.setProperty('--sky', (3.4 * p).toFixed(1) + 'px');
+  app.style.setProperty('--skd', (0.24 + 0.08 * p).toFixed(2) + 's');
   app.classList.remove('shaking');
   void app.offsetWidth;
   app.classList.add('shaking');
-  setTimeout(function(){ app.classList.remove('shaking'); }, 320);
+  clearTimeout(shakeScreen._t);
+  shakeScreen._t = setTimeout(function(){ app.classList.remove('shaking'); }, 420);
 }
 
 /* =========================================================
@@ -934,7 +1163,7 @@ function spawnMonster(isBoss){
   el.addEventListener('pointerdown', function(ev){
     ev.preventDefault();
     if(!S.running || S.paused) return;
-    if(m.dead) return;
+    if(m.dead || m.pending) return;
     setTarget(m, true);
     Sfx.tap();
   });
@@ -960,13 +1189,14 @@ function pickTarget(){
   var best = null;
   for(var i=0;i<S.monsters.length;i++){
     var m = S.monsters[i];
-    if(m.dead) continue;
+    if(m.dead || m.pending) continue;
     if(!best || m.y > best.y) best = m;
   }
   return best;
 }
 
 function setTarget(m, manual){
+  if(m && m.pending) m = null;
   S.targetId = m ? m.id : null;
   S.manual = !!(m && manual);
   S.input = '';
@@ -1040,64 +1270,79 @@ function failAnswer(word){
 
 function hitTarget(){
   var m = currentTarget();
-  if(!m || m.dead) return;
+  if(!m || m.dead || m.pending) return;
 
   S.combo++;
   var pts = 10 + Math.min(S.combo - 1, 5) * 2;
   addScore(pts);
   Sfx.correct(S.combo);
+
+  // 미사일을 발사하고, 명중은 도착했을 때 처리한다
+  m.pending = true;
+  m.pendingPts = pts;
+  m.pendingCombo = S.combo;
+  m.el.classList.add('pending');
   fireLaser(m);
 
-  var fr = fieldRect();
-  var mx = fr.width * m.x;
-  var my = fr.height * m.y;
-  floatText(mx, my - 18, '+' + pts + (S.combo >= 2 ? ' 🔥' : ''));
+  // 날아가는 동안에도 아이가 바로 다음 문제를 풀 수 있게 타겟을 넘긴다
+  var nt = pickTarget();
+  setTarget(nt);
+}
+
+function resolveHit(ms){
+  var m = ms.m;
+  var hx = ms.x, hy = ms.y;
+  if(!m || m.dead || !S.running || S.stageDone) return;
+
+  m.pending = false;
+  m.el.classList.remove('pending');
+
+  var pts = m.pendingPts || 10;
+  var combo = m.pendingCombo || S.combo;
+  var power = m.boss ? 1.5 : (combo >= 5 ? 1.25 : 1);
+
+  impactFx(hx, hy, power);
+  Sfx.impact(power);
+  shakeScreen(power);
+  S.hitStop = m.boss ? 0.10 : 0.06;
+
+  m.el.classList.remove('impact');
+  void m.el.offsetWidth;
+  m.el.classList.add('impact');
+  setTimeout(function(){ m.el.classList.remove('impact'); }, 360);
+
+  floatText(hx, hy - 18, '+' + pts + (combo >= 2 ? ' 🔥' : ''), combo >= 5 ? 'big' : '');
 
   if(m.boss){
     m.hp--;
     if(m.hpFill) m.hpFill.style.width = Math.max(0, (m.hp / m.maxHp) * 100) + '%';
-    m.el.classList.remove('hit');
-    void m.el.offsetWidth;
-    m.el.classList.add('hit');
-    Sfx.bossHit();
-    m.y = clamp(m.y - 0.05, -0.05, 0.86);
+    m.y = clamp(m.y - 0.06, -0.05, 0.86);
     m.el.style.top = (m.y * 100).toFixed(2) + '%';
-    burst(mx, my, { count: 12, dist: 75, size: 17 });
     if(m.hp <= 0){ defeatBoss(m); return; }
     m.prob = makeProblem(S.stage);
-    m.el.querySelector('.bubble').textContent = bubbleTextOf(m.prob);
-    showPanelFor(m.prob);
-    S.input = '';
-    renderInput();
+    var bub = m.el.querySelector('.bubble');
+    if(bub) bub.textContent = bubbleTextOf(m.prob);
+    if(!currentTarget()) setTarget(m);
   } else {
     m.dead = true;
     S.kills++;
-    killNormal(m, mx, my, pts);
-  }
-}
-
-function killNormal(m, mx, my, pts){
-  m.el.classList.remove('target');
-  m.el.classList.add('die');
-  m.el.style.pointerEvents = 'none';
-  burst(mx, my, { count: 9, dist: 62, size: 16 });
-  Sfx.hit();
-  setTimeout(function(){ if(m.el.parentNode) m.el.parentNode.removeChild(m.el); }, 330);
-
-  removeMonsterFromList(m);
-  if(S.targetId === m.id){
-    setTarget(pickTarget());
-  }
-  if(S.combo === 5 || S.combo === 10 || S.combo === 15){
-    floatText(mx, my - 55, S.combo + '콤보! 멋져요', 'big');
-  }
-  if(S.kills >= S.needKills && !S.bossActive && !S.stageDone){
-    scheduleBoss();
+    m.el.classList.remove('target');
+    m.el.classList.add('die');
+    m.el.style.pointerEvents = 'none';
+    setTimeout(function(){ if(m.el.parentNode) m.el.parentNode.removeChild(m.el); }, 360);
+    removeMonsterFromList(m);
+    if(S.targetId === m.id) setTarget(pickTarget());
+    if(combo === 5 || combo === 10 || combo === 15){
+      floatText(hx, hy - 55, combo + '콤보! 멋져요', 'big');
+    }
+    if(S.kills >= S.needKills && !S.bossActive && !S.stageDone){
+      scheduleBoss();
+    }
   }
 }
 
 function hitWall(m){
-  if(m.dead) return;
+  if(m.dead || m.pending) return;
   m.dead = true;
 
   S.hearts--;
@@ -1143,6 +1388,7 @@ function scheduleBoss(){
 
 function defeatBoss(m){
   m.dead = true;
+  clearMissiles();
   var fr = fieldRect();
   var mx = fr.width * m.x;
   var my = fr.height * m.y;
@@ -1162,6 +1408,7 @@ function defeatBoss(m){
   for(var i=0;i<S.monsters.length;i++){
     (function(mm){
       mm.dead = true;
+      mm.pending = false;
       mm.el.classList.add('gone');
       setTimeout(function(){ if(mm.el.parentNode) mm.el.parentNode.removeChild(mm.el); }, 340);
     })(S.monsters[i]);
@@ -1222,6 +1469,8 @@ function gameOver(){
   S.running = false;
   S.paused = false;
   S.targetId = null;
+  clearMissiles();
+  for(var i=0;i<S.monsters.length;i++){ S.monsters[i].pending = false; }
   Sfx.gameOver();
   showOverlay({
     emoji: '😢',
@@ -1343,6 +1592,14 @@ function loop(ts){
 function update(dt){
   var par = stageParams(S.stage);
 
+  // 명중 순간의 짧은 정지(hit-stop) — 타격감을 위해 게임을 아주 잠깐 멈춘다
+  if(S.hitStop > 0){
+    S.hitStop = Math.max(0, S.hitStop - dt);
+    return;
+  }
+
+  updateMissiles(dt);
+
   if(!S.bossActive && !S.stageDone && S.monsters.length < 7){
     S.spawnT -= dt;
     if(S.spawnT <= 0){
@@ -1357,10 +1614,15 @@ function update(dt){
   for(var i=0;i<list.length;i++){
     var m = list[i];
     if(m.dead) continue;
-    m.y += m.speed * dt;
+    if(m.pending){
+      // 이미 미사일이 날아가는 중 — 성까지 오지 않고 그 자리에서 맞기를 기다린다
+      if(m.y < 0.86) m.y += m.speed * dt;
+    } else {
+      m.y += m.speed * dt;
+    }
     m.el.style.left = (m.x * 100).toFixed(2) + '%';
     m.el.style.top = (m.y * 100).toFixed(2) + '%';
-    if(m.y >= 0.895){
+    if(!m.pending && m.y >= 0.895){
       hitWall(m);
       if(!S.running) return;
     }
@@ -1481,6 +1743,7 @@ function toTitle(){
   }
   S.monsters = [];
   S.monsters.length = 0;
+  clearMissiles();
   elFx.innerHTML = '';
   hideOverlay();
   elGame.hidden = true;
@@ -1512,6 +1775,7 @@ function startGame(mode){
     if(S.monsters[i].el.parentNode) S.monsters[i].el.parentNode.removeChild(S.monsters[i].el);
   }
   S.monsters = [];
+  clearMissiles();
   elFx.innerHTML = '';
 
   elTitle.hidden = true;
