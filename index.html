@@ -134,6 +134,23 @@ body{
 .g-btn.on{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;border-color:#2f7ff0;
   box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
 
+/* ---------- 주인공 이름 · 수학 답 방식 (title) ---------- */
+.name-row{display:flex;align-items:center;gap:6px;width:100%;}
+.name-in{flex:1 1 auto;min-width:0;border:2px solid #cfe3f8;border-radius:12px;padding:7px 10px;
+  font-family:inherit;font-weight:900;font-size:16px;line-height:1.15;color:#17395c;background:#fff;
+  box-shadow:0 3px 0 #dbe9f8;outline:none;-webkit-user-select:text;user-select:text;
+  -webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;}
+.name-in::placeholder{color:#a9bcd0;font-weight:800;letter-spacing:-.3px;}
+.name-in:focus{border-color:#7bb7ff;box-shadow:0 3px 0 #cfe4fb,0 0 0 3px rgba(123,183,255,.28);}
+.opt-row{display:flex;align-items:center;gap:4px;width:100%;}
+.mt-btn{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;
+  border:2px solid #cfe3f8;background:#fff;color:#2a5b96;border-radius:12px;padding:7px 0;
+  font-family:inherit;font-weight:900;font-size:clamp(12px,3.4vw,15px);line-height:1;cursor:pointer;
+  box-shadow:0 3px 0 #dbe9f8;transition:background .15s,box-shadow .07s,transform .07s;}
+.mt-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe9f8;}
+.mt-btn.on{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;border-color:#2f7ff0;
+  box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
+
 /* ---------- hud ---------- */
 #screenGame{align-items:center;justify-content:center;
   background:radial-gradient(120% 90% at 50% 0%,#d9f1ff 0%,#eaf8ff 50%,#f4ffef 100%);}
@@ -294,6 +311,9 @@ body{
 .ch:active{transform:translateY(3px);box-shadow:0 0 0 #c9dcf5;}
 .ch i{position:absolute;left:7px;top:5px;font-style:normal;font-weight:800;color:#93aec9;font-size:clamp(9px,2.7vw,12px);}
 .ch.bad{animation:shake .34s ease;background:#ffe9e9;box-shadow:0 3px 0 #f3b6b6;color:#c62b2b;}
+/* 객관식 수학 — 낱말 모드와 같은 4지선다, 숫자를 크게 */
+.qbar.qbar-choice{min-height:clamp(30px,5.4vh,46px);margin-bottom:4px;}
+.ch.mch{font-size:clamp(18px,5.6vw,30px);letter-spacing:-.5px;}
 
 /* ---------- overlay ---------- */
 .overlay{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;
@@ -403,6 +423,19 @@ body{
         <button class="g-btn" type="button" data-grade="4">초4</button>
         <button class="g-btn" type="button" data-grade="5">초5</button>
         <button class="g-btn" type="button" data-grade="6">초6</button>
+      </div>
+
+      <div class="name-row">
+        <span class="grade-cap" aria-hidden="true">🏷️ 이름</span>
+        <input class="name-in" id="heroName" type="text" maxlength="10" placeholder="예: 민준"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               enterkeyhint="done" aria-label="주인공 이름 (최대 10자)">
+      </div>
+
+      <div class="opt-row" id="mathTypeRow" role="group" aria-label="수학 답 입력 방식">
+        <span class="grade-cap">답</span>
+        <button class="mt-btn on" data-mt="typein" type="button">✏️ 주관식</button>
+        <button class="mt-btn" data-mt="choice" type="button">🔢 객관식</button>
       </div>
 
       <button class="mode-card m-math" data-mode="math" type="button">
@@ -532,6 +565,18 @@ body{
           <button class="k del" data-k="del" type="button">⌫ 지움</button>
           <button class="k" data-k="0" type="button">0</button>
           <button class="k fire" data-k="fire" type="button">발사!</button>
+        </div>
+      </div>
+
+      <div id="panelMathChoice" hidden>
+        <div class="qbar qbar-choice">
+          <div class="q" id="qMathC">3 + 4 = ?</div>
+        </div>
+        <div class="choices" id="mChoices">
+          <button class="ch mch" data-mi="0" type="button"><i>1</i><span></span></button>
+          <button class="ch mch" data-mi="1" type="button"><i>2</i><span></span></button>
+          <button class="ch mch" data-mi="2" type="button"><i>3</i><span></span></button>
+          <button class="ch mch" data-mi="3" type="button"><i>4</i><span></span></button>
         </div>
       </div>
 
@@ -1136,9 +1181,20 @@ var S = {
   ts: 0,
   spawnT: 0,
   modeType: 'math',
+  mathType: 'typein',
   missiles: [],
   hitStop: 0
 };
+
+/* 주인공 이름 — 기기 안(localStorage)에만 저장, 밖으로 나가지 않는다 */
+var NAME_KEY = 'gm_hero_name';
+var heroName = '';
+
+function loadHeroName(){
+  var v = Store.get(NAME_KEY, '');
+  heroName = (typeof v === 'string') ? v.replace(/\s+/g, ' ').trim().slice(0, 10) : '';
+  return heroName;
+}
 
 var BOSSES = [
   { emoji:'🟢', crown:'👑', name:'대왕 슬라임', hp:3 },
@@ -1168,8 +1224,11 @@ var elScore = $('scoreLabel');
 var elCombo = $('comboLabel');
 var elPanelIdle = $('panelIdle');
 var elPanelMath = $('panelMath');
+var elPanelMathChoice = $('panelMathChoice');
 var elPanelWord = $('panelWord');
 var elQMath = $('qMath');
+var elQMathC = $('qMathC');
+var elMChoices = $('mChoices');
 var elAnsBox = $('ansBox');
 var elPad = $('pad');
 var elWEmoji = $('wEmoji');
@@ -1204,8 +1263,39 @@ function modeType(){
   if(S.mode === 'mix') return Math.random() < 0.5 ? 'math' : 'word';
   return S.mode;
 }
+
+/* 정답 근처의 그럴듯한 오답 3가지 — 0 이상 정수, 정답과 겹치지 않게 */
+function mathDistractors(ans){
+  var a = Math.max(0, Math.round(ans));
+  var out = [a];
+  var steps;
+  if(a < 10) steps = [1, 2, 3, -1, -2, 10];
+  else if(a < 30) steps = [1, 2, 10, -1, -2, 20];
+  else if(a < 100) steps = [1, 10, 2, -1, -10, 20];
+  else if(a < 1000) steps = [10, 100, 1, -10, -100, 20];
+  else steps = [100, 1000, 10, -100, -1000, 1];
+  shuffle(steps);
+  for(var i = 0; i < steps.length && out.length < 4; i++){
+    var v = a + steps[i];
+    if(v < 0 || out.indexOf(v) !== -1) continue;
+    out.push(v);
+  }
+  var g = 3;
+  while(out.length < 4 && g < 600){
+    var cand = (Math.random() < 0.5) ? a + g : a - g;
+    if(cand >= 0 && out.indexOf(cand) === -1) out.push(cand);
+    g++;
+  }
+  return out;
+}
+
 function makeProblem(stage){
-  return modeType() === 'math' ? genMath(S.grade, stage) : genWord(stage);
+  if(modeType() === 'math'){
+    var p = genMath(S.grade, stage);
+    if(S.mathType === 'choice') p.choices = shuffle(mathDistractors(p.ans));
+    return p;
+  }
+  return genWord(stage);
 }
 
 /* =========================================================
@@ -1547,6 +1637,7 @@ function showPanelFor(prob){
   elPanelIdle.hidden = true;
   if(prob && prob.type === 'word'){
     elPanelMath.hidden = true;
+    elPanelMathChoice.hidden = true;
     elPanelWord.hidden = false;
     elWEmoji.textContent = prob.emoji;
     if(prob.kind === 'missing'){ elWQ.innerHTML = prob.qhtml; elWQ.style.letterSpacing = '2px'; }
@@ -1561,19 +1652,35 @@ function showPanelFor(prob){
     }
   } else if(prob && prob.type === 'math'){
     elPanelWord.hidden = true;
-    elPanelMath.hidden = false;
+    var useChoice = !!(prob.choices && prob.choices.length);
+    elPanelMath.hidden = useChoice;
+    elPanelMathChoice.hidden = !useChoice;
     var lines = prob.lines || [prob.text];
-    elQMath.innerHTML = '';
+    var qEl = useChoice ? elQMathC : elQMath;
+    qEl.innerHTML = '';
     for(var li=0;li<lines.length;li++){
-      if(li) elQMath.appendChild(document.createElement('br'));
-      elQMath.appendChild(document.createTextNode(lines[li]));
+      if(li) qEl.appendChild(document.createElement('br'));
+      qEl.appendChild(document.createTextNode(lines[li]));
     }
-    var ansDigits = String(prob.ans).length;
-    elAnsBox.style.minWidth = Math.min(88, 24 + ansDigits * 14) + 'px';
-    fitQuestion(lines);
-    renderInput();
+    if(useChoice){
+      var cbs = elMChoices.querySelectorAll('.ch');
+      for(var ci=0;ci<cbs.length;ci++){
+        var csp = cbs[ci].querySelector('span');
+        var cv = prob.choices[ci];
+        csp.textContent = (cv === undefined) ? '' : String(cv);
+        cbs[ci].classList.remove('bad');
+        cbs[ci].style.visibility = (cv === undefined) ? 'hidden' : 'visible';
+      }
+      fitChoiceQuestion(lines);
+    } else {
+      var ansDigits = String(prob.ans).length;
+      elAnsBox.style.minWidth = Math.min(88, 24 + ansDigits * 14) + 'px';
+      fitQuestion(lines);
+      renderInput();
+    }
   } else {
     elPanelMath.hidden = true;
+    elPanelMathChoice.hidden = true;
     elPanelWord.hidden = true;
     elPanelIdle.hidden = false;
   }
@@ -1595,6 +1702,16 @@ function fitQuestion(lines){
   var base = Math.min(34, Math.max(20, window.innerWidth * 0.068));
   var px = fitFont(lines, avail, base, 13);
   elQMath.style.fontSize = px.toFixed(0) + 'px';
+}
+
+/* 객관식 판 — 보기 버튼 폭에 맞춰 문제 글자 크기를 맞춘다 */
+function fitChoiceQuestion(lines){
+  var bar = elQMathC.parentNode;
+  var barW = bar ? bar.getBoundingClientRect().width : 300;
+  var avail = Math.max(120, barW - 24);
+  var base = Math.min(30, Math.max(19, window.innerWidth * 0.062));
+  var px = fitFont(lines, avail, base, 12);
+  elQMathC.style.fontSize = px.toFixed(0) + 'px';
 }
 
 function flashBad(){
@@ -1814,6 +1931,24 @@ function chooseWord(i){
   }
 }
 
+function chooseMathChoice(i){
+  var t = currentTarget();
+  if(!t || t.prob.type !== 'math' || !t.prob.choices) return;
+  if(Date.now() < lockUntil) return;
+  var v = t.prob.choices[i];
+  if(v === undefined || v === null) return;
+  if(v === t.prob.ans){
+    hitTarget();
+  } else {
+    var btns = elMChoices.querySelectorAll('.ch');
+    if(btns[i]){
+      btns[i].classList.add('bad');
+      setTimeout(function(){ if(btns[i]) btns[i].classList.remove('bad'); }, 400);
+    }
+    failAnswer('앗!');
+  }
+}
+
 function failAnswer(word){
   S.combo = 0;
   S.input = '';
@@ -1891,7 +2026,11 @@ function resolveHit(ms){
     removeMonsterFromList(m);
     if(S.targetId === m.id) setTarget(pickTarget());
     if(combo === 5 || combo === 10 || combo === 15){
-      floatText(hx, hy - 55, combo + '콤보! 멋져요', 'big');
+      var nc = heroName ? heroName + ' ' : '';
+      var cm = (combo === 5) ? nc + '최고! ' + combo + '콤보!'
+             : (combo === 10) ? nc + '멋지다! ' + combo + '콤보!'
+             : nc + '최강! ' + combo + '콤보!';
+      floatText(hx, hy - 55, cm, 'big');
     }
     if(S.kills >= S.needKills && !S.bossActive && !S.stageDone){
       scheduleBoss();
@@ -1935,7 +2074,8 @@ function hitWall(m){
 function scheduleBoss(){
   S.bossActive = true;
   var info = bossInfo(S.stage);
-  banner('⚠️ 보스 출현! ⚠️', info.crown + ' ' + info.name, 1900);
+  banner(heroName ? '⚠️ ' + heroName + '! ' + info.name + ' 출현!' : '⚠️ ' + info.name + ' 출현!',
+         '보스를 물리쳐라!', 1900);
   Sfx.bossAppear();
   setTimeout(function(){
     if(!S.running || S.paused || S.stageDone) return;
@@ -1974,6 +2114,7 @@ function defeatBoss(m){
   S.monsters = [];
   elPanelIdle.hidden = false;
   elPanelMath.hidden = true;
+  elPanelMathChoice.hidden = true;
   elPanelWord.hidden = true;
 
   setTimeout(stageClearScreen, 650);
@@ -1986,8 +2127,9 @@ function stageClearScreen(){
     Sfx.victory();
     showOverlay({
       emoji: '🏆',
-      title: '모든 단계 클리어!',
-      sub: '정말 대단해요! 최고의 디펜스 용사예요 🎉',
+      title: heroName ? '최강 영웅 ' + heroName + '!' : '모든 단계 클리어!',
+      sub: heroName ? heroName + ' 용사, 우주 정복 완료! 정말 대단해요 🎉'
+                    : '정말 대단해요! 최고의 디펜스 용사예요 🎉',
       stats: [{ label:'이번 점수', value:S.score, highlight:true }, { label:'최고 점수', value:S.best }],
       confetti: true,
       buttons: [
@@ -1996,10 +2138,12 @@ function stageClearScreen(){
       ]
     });
   } else {
+    var clearTitle = (S.mode === 'word' ? '' : '초' + S.grade + ' ') + S.stage + '단계 클리어!';
     showOverlay({
       emoji: '🎉',
-      title: (S.mode === 'word' ? '' : '초' + S.grade + ' ') + S.stage + '단계 클리어!',
-      sub: '보스를 물리쳤어요! 다음 단계로 가 볼까요?',
+      title: heroName ? heroName + ', ' + clearTitle : clearTitle,
+      sub: heroName ? heroName + ' 용사, 보스를 물리쳤어요! 다음 단계로 가 볼까요?'
+                    : '보스를 물리쳤어요! 다음 단계로 가 볼까요?',
       stats: [{ label:'점수', value:S.score }, { label:'최고', value:S.best }],
       confetti: true,
       buttons: [
@@ -2019,7 +2163,8 @@ function nextStage(){
   S.spawnT = 1.4;
   S.ts = 0;
   updateHud();
-  banner(S.stage + '단계 시작!', S.mode === 'mix' ? '점점 빨라져요!' : '힘내세요!', 1500);
+  banner(heroName ? heroName + ', ' + S.stage + '단계 시작!' : S.stage + '단계 시작!',
+         S.mode === 'mix' ? '점점 빨라져요!' : '힘내세요!', 1500);
   if(!S.running) startLoop();
 }
 
@@ -2033,7 +2178,8 @@ function gameOver(){
   showOverlay({
     emoji: '😢',
     title: '게임 끝!',
-    sub: '하트를 모두 잃었어요. 다시 도전해 볼까요?',
+    sub: heroName ? '아쉽다 ' + heroName + '! 다시 도전하자!'
+                  : '하트를 모두 잃었어요. 다시 도전해 볼까요?',
     stats: [
       { label:'점수', value:S.score, highlight:S.score >= S.best },
       { label:'최고 점수', value:S.best }
@@ -2227,6 +2373,15 @@ elChoices.addEventListener('pointerdown', function(ev){
   chooseWord(parseInt(btn.getAttribute('data-i'), 10));
 });
 
+elMChoices.addEventListener('pointerdown', function(ev){
+  var btn = ev.target.closest ? ev.target.closest('.ch') : null;
+  if(!btn) return;
+  ev.preventDefault();
+  if(!S.running || S.paused) return;
+  Sfx.unlock();
+  chooseMathChoice(parseInt(btn.getAttribute('data-mi'), 10));
+});
+
 document.addEventListener('keydown', function(ev){
   if(elGame.hidden) return;
   var k = ev.key;
@@ -2240,6 +2395,10 @@ document.addEventListener('keydown', function(ev){
   if(!t) return;
 
   if(t.prob.type === 'math'){
+    if(t.prob.choices && t.prob.choices.length){
+      if(k >= '1' && k <= '4' && k.length === 1){ ev.preventDefault(); Sfx.unlock(); chooseMathChoice(parseInt(k,10) - 1); }
+      return;
+    }
     if(k >= '0' && k <= '9' && k.length === 1){ ev.preventDefault(); Sfx.unlock(); pressDigit(k); }
     else if(k === 'Backspace'){ ev.preventDefault(); S.input = S.input.slice(0, -1); renderInput(); }
     else if(k === 'Enter'){ ev.preventDefault(); submitMath(); }
@@ -2262,7 +2421,7 @@ function togglePause(){
   showOverlay({
     emoji: '⏸',
     title: '잠깐 쉬는 중',
-    sub: '준비되면 계속 눌러요!',
+    sub: heroName ? heroName + ' 용사, 준비되면 계속 눌러요!' : '준비되면 계속 눌러요!',
     buttons: [
       { label:'계속하기 ▶', primary:true, onClick:function(){ hideOverlay(); S.paused = false; S.ts = 0; } },
       { label:'그만하기', onClick:function(){ hideOverlay(); toTitle(); } }
@@ -2615,7 +2774,7 @@ function refreshTitleBests(){
   var sm = $('subMath');
   if(sm && info) sm.textContent = info.sub;
   var sx = $('subMix');
-  if(sx) sx.textContent = '초' + g + ' 수학 + 낱말, 끝없이';
+  if(sx) sx.textContent = '초' + g + ' 수학(' + (S.mathType === 'choice' ? '객관식' : '주관식') + ') + 낱말';
 }
 
 function setGrade(g){
@@ -2628,6 +2787,19 @@ function setGrade(g){
     else btns[i].classList.remove('on');
   }
   refreshTitleBests();
+}
+
+/* 수학 답 방식 — 주관식(숫자판) / 객관식(4지선다) */
+function setMathType(t, silent){
+  S.mathType = (t === 'choice') ? 'choice' : 'typein';
+  Store.set('gm_math_type', S.mathType);
+  var btns = document.querySelectorAll('.mt-btn');
+  for(var i=0;i<btns.length;i++){
+    if(btns[i].getAttribute('data-mt') === S.mathType) btns[i].classList.add('on');
+    else btns[i].classList.remove('on');
+  }
+  refreshTitleBests();
+  if(!silent) Sfx.tap();
 }
 
 function soundIcon(){
@@ -2689,7 +2861,9 @@ function startGame(mode){
   showPanelFor(null);
   elPanelIdle.textContent = '몬스터를 기다리는 중…';
 
-  banner(S.stage + '단계 시작!', S.mode === 'word' ? '낱말을 맞혀라!' : ('초' + S.grade + ' 수학 문제를 풀어라!'), 1500);
+  banner(heroName ? '출동! ' + heroName + ' 용사!' : '출동! 용사!',
+         S.mode === 'word' ? '낱말을 맞혀라!'
+           : ('초' + S.grade + ' 수학 ' + (S.mathType === 'choice' ? '객관식' : '주관식') + ' 시작!'), 1600);
   startLoop();
 }
 
@@ -2766,9 +2940,45 @@ if(btnHeroReset){
   });
 }
 
+/* 수학 답 방식 토글 (주관식 / 객관식) */
+var mtBtns = document.querySelectorAll('.mt-btn');
+for(var mi=0;mi<mtBtns.length;mi++){
+  (function(btn){
+    btn.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      Sfx.unlock();
+      setMathType(btn.getAttribute('data-mt'));
+    });
+  })(mtBtns[mi]);
+}
+
+/* 🏷️ 주인공 이름 — 기기 안(localStorage)에만 저장 */
+function saveHeroName(){
+  var el = $('heroName');
+  if(!el) return;
+  var v = String(el.value || '').replace(/\s+/g, ' ').trim().slice(0, 10);
+  heroName = v;
+  if(v) Store.set(NAME_KEY, v); else Store.remove(NAME_KEY);
+}
+var nameEl = $('heroName');
+if(nameEl){
+  nameEl.value = loadHeroName();
+  nameEl.addEventListener('input', saveHeroName);
+  nameEl.addEventListener('change', function(){
+    saveHeroName();
+    if(heroName) heroToast('안녕, ' + heroName + ' 용사! 🚀');
+    else heroToast('이름을 넣으면 게임에서 불러 줄게요');
+  });
+  nameEl.addEventListener('keydown', function(ev){
+    if(ev.key === 'Enter'){ ev.preventDefault(); nameEl.blur(); }
+  });
+}
+
+setMathType(Store.get('gm_math_type', 'typein'), true);
 setGrade(Store.get('gm_grade', 1));
 applyHeroPhoto(heroPhotoUrl());
 soundIcon();
+if(heroName) setTimeout(function(){ heroToast('오늘도 출동! ' + heroName + ' 용사!'); }, 700);
 
 })();
 </script>
