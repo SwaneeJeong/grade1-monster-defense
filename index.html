@@ -151,6 +151,20 @@ body{
 .mt-btn.on{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;border-color:#2f7ff0;
   box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
 
+/* ---------- 몬스터 속도 (느림 / 보통 / 빠름) ---------- */
+.spd-row{display:flex;align-items:center;gap:4px;width:100%;}
+.spd-btn{flex:1 1 0;min-width:0;border:2px solid #cfe3f8;background:#fff;color:#2a5b96;
+  border-radius:12px;padding:7px 0;font-family:inherit;font-weight:900;font-size:clamp(12px,3.4vw,15px);
+  line-height:1;cursor:pointer;box-shadow:0 3px 0 #dbe9f8;
+  transition:background .15s,box-shadow .07s,transform .07s,color .15s;}
+.spd-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe9f8;}
+.spd-btn.on{color:#fff;border-color:#2f7ff0;background:linear-gradient(135deg,#4facfe,#2f7ff0);
+  box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
+.spd-btn[data-speed="slow"].on{border-color:#2f9c3f;background:linear-gradient(135deg,#79d95a,#2f9c3f);
+  box-shadow:0 3px 0 #1f7a2c,0 0 12px rgba(80,200,110,.45);}
+.spd-btn[data-speed="fast"].on{border-color:#e2620f;background:linear-gradient(135deg,#ffb545,#f4711f);
+  box-shadow:0 3px 0 #b34a0c,0 0 12px rgba(255,140,60,.45);}
+
 /* ---------- hud ---------- */
 #screenGame{align-items:center;justify-content:center;
   background:radial-gradient(120% 90% at 50% 0%,#d9f1ff 0%,#eaf8ff 50%,#f4ffef 100%);}
@@ -171,6 +185,21 @@ body{
   font-size:clamp(12px,3.6vw,16px);cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;
   font-family:inherit;padding:0;}
 .icon-btn:active{transform:scale(.94);}
+
+/* HUD 안의 속도 버튼 (게임 중 바로 바꾸기) */
+.spd-hud{height:clamp(27px,8vw,36px);border-radius:99px;border:2px solid #cfe3f8;background:#f4faff;
+  display:flex;align-items:center;justify-content:center;gap:2px;padding:0 6px;cursor:pointer;
+  font-family:inherit;font-weight:900;font-size:clamp(10px,2.9vw,13px);line-height:1;color:#2a5b96;
+  white-space:nowrap;box-shadow:0 2px 0 #e2eefb;transition:background .15s,border-color .15s,color .15s,transform .07s;}
+.spd-hud:active{transform:scale(.93);box-shadow:none;}
+.spd-hud[data-speed="slow"]{border-color:#b7e6c0;background:#f1fff4;color:#237c2c;box-shadow:0 2px 0 #dcf3e2;}
+.spd-hud[data-speed="fast"]{border-color:#ffcf9e;background:#fff6ec;color:#b34a0c;box-shadow:0 2px 0 #ffe6cf;}
+.spd-hud .sh-ico{font-size:clamp(12px,3.6vw,16px);line-height:1;}
+.spd-toast{position:absolute;left:50%;top:56px;z-index:26;transform:translate(-50%,-6px);
+  background:rgba(18,50,78,.92);color:#fff;font-weight:900;font-size:clamp(11px,3.2vw,14px);
+  padding:6px 13px;border-radius:99px;white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .16s,transform .16s;box-shadow:0 6px 16px rgba(10,40,80,.28);}
+.spd-toast.show{opacity:1;transform:translate(-50%,0);}
 
 /* ---------- field ---------- */
 .field{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;
@@ -439,6 +468,13 @@ body{
         <button class="mt-btn" data-mt="choice" type="button">🔢 객관식</button>
       </div>
 
+      <div class="spd-row" id="speedRow" role="group" aria-label="몬스터 속도 선택">
+        <span class="grade-cap">속도</span>
+        <button class="spd-btn" data-speed="slow" type="button">🐢 느림</button>
+        <button class="spd-btn on" data-speed="normal" type="button">🏃 보통</button>
+        <button class="spd-btn" data-speed="fast" type="button">⚡ 빠름</button>
+      </div>
+
       <button class="mode-card m-math" data-mode="math" type="button">
         <span class="mc-emoji">🔢</span>
         <span class="mc-txt">수학 대모험
@@ -492,6 +528,9 @@ body{
         <span class="pill combo" id="comboLabel" hidden>🔥 x2</span>
       </div>
       <div class="hud-right">
+        <button class="spd-hud" id="btnSpeed" data-speed="normal" type="button" aria-label="몬스터 속도 바꾸기 (지금: 보통)">
+          <span class="sh-ico" id="spdHudIco" aria-hidden="true">🏃</span><span id="spdHudLb">보통</span>
+        </button>
         <button class="icon-btn" id="btnSound" type="button" aria-label="소리">🔊</button>
         <button class="icon-btn" id="btnPause" type="button" aria-label="일시정지">⏸</button>
       </div>
@@ -543,6 +582,7 @@ body{
       </div>
       <div class="fx" id="fxLayer"></div>
       <div class="banner" id="bannerEl" hidden></div>
+      <div class="spd-toast" id="spdToast" role="status" aria-live="polite"></div>
     </div>
 
     <div class="panel">
@@ -1261,6 +1301,30 @@ var elOverlay = $('overlay');
    ========================================================= */
 var SPEED_BOOST = 1.30;   // 몹 하강 속도 (기존 대비 +30%)
 
+/* 속도 난이도 — 🐢 느림 / 🏃 보통 / ⚡ 빠름 (기기 안(localStorage)에만 저장) */
+var SPEED_KEY = 'gm_speed_level';
+var SPEED_LEVELS = { slow: 0.75, normal: 1.00, fast: 1.35 };
+var SPEED_LABELS = { slow: '🐢 느림', normal: '🏃 보통', fast: '⚡ 빠름' };
+var speedLevel = 'normal';
+
+function normSpeed(v){
+  return (v === 'slow' || v === 'fast') ? v : 'normal';
+}
+
+function speedFactor(){
+  var v = SPEED_LEVELS[speedLevel];
+  return (typeof v === 'number') ? v : 1;
+}
+
+function speedLabel(){
+  return SPEED_LABELS[speedLevel] || SPEED_LABELS.normal;
+}
+
+/* 학년·속도 난이도를 모두 곱한 최종 배율 — 5세는 한 번 더 느리게 */
+function speedScale(){
+  return SPEED_BOOST * ((S.grade === 0) ? 0.70 : 1) * speedFactor();
+}
+
 function stageParams(stage){
   var s = clamp(stage, 1, 5);
   var tbl = {
@@ -1276,8 +1340,8 @@ function stageParams(stage){
   // 학년이 올라가면 문제가 길어지므로 몹이 나오는 간격만 아주 살짝 넉넉하게
   var gap = (g >= 5) ? 1.16 : (g === 4 ? 1.09 : 1);
   // 5세는 손으로 세면서 답할 수 있도록 하강 속도를 현재 속도의 0.7배로 (초1~초6은 그대로 1.30배)
-  var speedMul = SPEED_BOOST * ((S.grade === 0) ? 0.70 : 1);
-  return { spawn: p.spawn * gap, speed: p.speed * speedMul };
+  // 여기에 고른 속도(느림 0.75 / 보통 1.00 / 빠름 1.35)를 한 번 더 곱한다
+  return { spawn: p.spawn * gap, speed: p.speed * speedScale() };
 }
 
 function modeType(){
@@ -1846,7 +1910,7 @@ function spawnMonster(isBoss){
     bossInfo: boss,
     x: isBoss ? 0.5 : chooseX(),
     y: isBoss ? -0.14 : -0.06,
-    speed: isBoss ? (0.019 + Math.min(S.stage, 5) * 0.0016) * SPEED_BOOST
+    speed: isBoss ? (0.019 + Math.min(S.stage, 5) * 0.0016) * speedScale()
                   : (par.speed * (0.92 + Math.random()*0.22)),
     dead: false,
     el: el
@@ -2810,6 +2874,63 @@ function setGrade(g){
   refreshTitleBests();
 }
 
+/* 몬스터 속도 — 🐢 느림 / 🏃 보통 / ⚡ 빠름 */
+function setSpeed(v, silent){
+  var prev = speedFactor();
+  speedLevel = normSpeed(v);
+  Store.set(SPEED_KEY, speedLevel);
+  var btns = document.querySelectorAll('.spd-btn');
+  for(var i=0;i<btns.length;i++){
+    if(btns[i].getAttribute('data-speed') === speedLevel) btns[i].classList.add('on');
+    else btns[i].classList.remove('on');
+  }
+  /* 게임 중에 바꾸면 내려오고 있는 몹·보스의 속도도 바로 반영 */
+  var next = speedFactor();
+  if(prev > 0 && next !== prev && S.monsters && S.monsters.length){
+    var r = next / prev;
+    for(var j=0;j<S.monsters.length;j++){
+      if(!S.monsters[j].dead) S.monsters[j].speed *= r;
+    }
+  }
+  syncSpeedHud();
+  if(!silent) Sfx.tap();
+}
+
+/* HUD의 속도 버튼 + 시작 화면 버튼 모양을 한 번에 맞춘다 */
+function syncSpeedHud(){
+  var b = $('btnSpeed');
+  if(!b) return;
+  var lb = SPEED_LABELS[speedLevel] || SPEED_LABELS.normal;
+  var parts = lb.split(' ');
+  var ico = parts[0] || '🏃';
+  var txt = parts[1] || '보통';
+  var ic = $('spdHudIco'), tl = $('spdHudLb');
+  if(ic) ic.textContent = ico;
+  if(tl) tl.textContent = txt;
+  b.setAttribute('data-speed', speedLevel);
+  b.setAttribute('aria-label', '몬스터 속도 바꾸기 (지금: ' + txt + ')');
+}
+
+/* 게임 중 HUD 버튼 — 느림 → 보통 → 빠름 → 느림 순서로 바꾸기 */
+var SPEED_ORDER = ['slow','normal','fast'];
+function cycleSpeed(){
+  var i = SPEED_ORDER.indexOf(speedLevel);
+  setSpeed(SPEED_ORDER[(i + 1) % SPEED_ORDER.length], true);
+  Sfx.tap();
+  speedToast('속도 ' + speedLabel());
+}
+
+function speedToast(msg){
+  var el = $('spdToast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(speedToast._t);
+  speedToast._t = setTimeout(function(){ el.classList.remove('show'); }, 1100);
+}
+
 /* 수학 답 방식 — 주관식(숫자판) / 객관식(4지선다) */
 function setMathType(t, silent){
   S.mathType = (t === 'choice') ? 'choice' : 'typein';
@@ -2882,9 +3003,10 @@ function startGame(mode){
   showPanelFor(null);
   elPanelIdle.textContent = '몬스터를 기다리는 중…';
 
+  var spdTag = (speedLevel === 'normal') ? '' : ' · ' + speedLabel();
   banner(heroName ? '출동! ' + heroName + ' 용사!' : '출동! 용사!',
-         S.mode === 'word' ? '낱말을 맞혀라!'
-           : (gradeTag(S.grade) + ' 수학 ' + (S.mathType === 'choice' ? '객관식' : '주관식') + ' 시작!'), 1600);
+         (S.mode === 'word' ? '낱말을 맞혀라!'
+           : (gradeTag(S.grade) + ' 수학 ' + (S.mathType === 'choice' ? '객관식' : '주관식') + ' 시작!')) + spdTag, 1600);
   startLoop();
 }
 
@@ -2961,6 +3083,28 @@ if(btnHeroReset){
   });
 }
 
+/* 게임 중 HUD 속도 버튼 */
+var btnSpeedEl = $('btnSpeed');
+if(btnSpeedEl){
+  btnSpeedEl.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    Sfx.unlock();
+    cycleSpeed();
+  });
+}
+
+/* 속도 토글 (느림 / 보통 / 빠름) */
+var spdBtns = document.querySelectorAll('.spd-btn');
+for(var si=0;si<spdBtns.length;si++){
+  (function(btn){
+    btn.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      Sfx.unlock();
+      setSpeed(btn.getAttribute('data-speed'));
+    });
+  })(spdBtns[si]);
+}
+
 /* 수학 답 방식 토글 (주관식 / 객관식) */
 var mtBtns = document.querySelectorAll('.mt-btn');
 for(var mi=0;mi<mtBtns.length;mi++){
@@ -2997,6 +3141,7 @@ if(nameEl){
 
 setMathType(Store.get('gm_math_type', 'typein'), true);
 setGrade(Store.get('gm_grade', 1));
+setSpeed(Store.get(SPEED_KEY, 'normal'), true);
 applyHeroPhoto(heroPhotoUrl());
 soundIcon();
 if(heroName) setTimeout(function(){ heroToast('오늘도 출동! ' + heroName + ' 용사!'); }, 700);
