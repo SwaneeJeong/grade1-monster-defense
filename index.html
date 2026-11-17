@@ -272,6 +272,9 @@ body{
 .monster.hit .body{animation:hitFlash .16s linear 2;}
 .monster.die{pointer-events:none;animation:diePop .32s ease-out forwards;}
 .monster.gone{pointer-events:none;animation:fadeOut .3s ease-out forwards;}
+/* 낱말 맞추기 그림 — 말풍선을 그림 액자처럼 키운다 (글자 크기는 JS에서 2배) */
+.monster.pic .bubble{padding:3px 9px;border-radius:15px;border-width:3px;box-shadow:0 2px 0 #cfe3ff;}
+.monster.pic.target .bubble{border-color:#ff8a3d;box-shadow:0 2px 0 #ffd6b0,0 0 14px rgba(255,150,60,.55);}
 .monster.boss .body{font-size:clamp(38px,12.5vw,68px);}
 .monster.boss .bubble{font-size:clamp(12px,3.6vw,19px);border-color:#ff6b6b;box-shadow:0 2px 0 #ffc7c7,0 0 16px rgba(255,90,90,.45);}
 .monster.boss.target .bubble{border-color:#ff8a3d;}
@@ -2659,20 +2662,33 @@ function bubbleMaxW(m){
   var edge = Math.min(m.x, 1 - m.x) * fr.width - 12;
   return Math.max(96, Math.min(fr.width * 0.62, edge * 2));
 }
-function bubbleBasePx(m){
-  return m.boss ? Math.min(19, Math.max(13, window.innerWidth * 0.036))
-                : Math.min(17, Math.max(11, window.innerWidth * 0.032));
+function bubbleBasePx(m, prob){
+  var base = m.boss ? Math.min(19, Math.max(13, window.innerWidth * 0.036))
+                    : Math.min(17, Math.max(11, window.innerWidth * 0.032));
+  /* 낱말 맞추기 그림 — 내려오는 몬스터 위의 그림을 2배로 키워 한눈에 알아보게 */
+  if(prob && prob.type === 'word' && prob.kind === 'pic'){
+    base = Math.min(base * 2, 40);
+  }
+  return base;
+}
+function isPicProb(prob){
+  return !!(prob && prob.type === 'word' && prob.kind === 'pic');
 }
 /* 문제가 길어도 말풍선 밖으로 삐져나가지 않게 줄을 나우고 글자를 줄인다 */
 function setBubbleText(bub, prob, m){
   var lines = (prob.type === 'math' && prob.lines) ? prob.lines : [bubbleTextOf(prob)];
+  var pic = isPicProb(prob);
   bub.innerHTML = '';
   for(var i=0;i<lines.length;i++){
     if(i) bub.appendChild(document.createElement('br'));
     bub.appendChild(document.createTextNode(lines[i]));
   }
-  var px = fitFont(lines, bubbleMaxW(m), bubbleBasePx(m), 9);
+  /* 그림 문제는 말풍선을 그림 액자처럼 — 여백·테두리를 넉넉히 */
+  var host = bub.parentNode;
+  if(host && host.classList) host.classList.toggle('pic', pic);
+  var px = fitFont(lines, bubbleMaxW(m), bubbleBasePx(m, prob), 9);
   bub.style.fontSize = px.toFixed(0) + 'px';
+  bub.style.lineHeight = pic ? '1' : '';
 }
 
 function spawnMonster(isBoss){
