@@ -456,6 +456,175 @@ body{
   42%{transform:scale(.76,1.34) translateY(-12%);filter:brightness(2.1) saturate(.5)}
   66%{transform:scale(1.14,.9) translateY(-3%)}
   100%{transform:scale(1,1);filter:none}}
+/* ---------- 📝 한자 급수 모의고사 (exam) ---------- */
+.m-exam{background:linear-gradient(135deg,#8b7cf6,#4b3aad);}
+.mode-card .mc-best.gold{background:linear-gradient(#ffe08a,#f0b429);color:#6a4100;}
+.exam-setup{position:fixed;inset:0;z-index:210;display:flex;align-items:center;justify-content:center;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(9,29,50,.74);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  overscroll-behavior:contain;animation:cropFade .16s ease-out;}
+.es-card{width:100%;max-width:340px;background:linear-gradient(#fffdf7,#f3f1ff);border-radius:24px;
+  padding:14px 14px 10px;display:flex;flex-direction:column;gap:9px;
+  box-shadow:0 18px 44px rgba(4,20,40,.5),0 0 0 2px rgba(255,255,255,.55);
+  animation:cropPop .2s cubic-bezier(.2,.9,.3,1.2);}
+.es-title{margin:0;font-size:19px;font-weight:900;color:#2a2b6b;text-align:center;letter-spacing:-.4px;line-height:1.2;}
+.es-sub{margin:1px 0 0;font-size:11.5px;font-weight:800;color:#8a86b8;text-align:center;line-height:1.3;}
+.es-cap{display:block;font-size:10.5px;font-weight:900;color:#6b68a8;letter-spacing:.6px;margin-bottom:4px;}
+.es-grades{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.es-g{border:2px solid #dcd8f5;background:#fff;border-radius:14px;padding:6px 0 5px;display:flex;
+  flex-direction:column;align-items:center;gap:0;font-family:inherit;cursor:pointer;color:#4b3aad;
+  box-shadow:0 3px 0 #e7e4f7;line-height:1.15;}
+.es-g b{font-size:15px;font-weight:900;}
+.es-g small{font-size:9px;font-weight:800;opacity:.72;}
+.es-g i{font-style:normal;font-size:9px;font-weight:900;color:#b08b00;margin-top:1px;white-space:nowrap;}
+.es-g.on{border-color:#5b46c9;background:linear-gradient(135deg,#8b7cf6,#5b46c9);color:#fff;box-shadow:0 3px 0 #3d2f96;}
+.es-g.on i{color:#ffe08a;}
+.es-g:active{transform:translateY(2px);box-shadow:0 1px 0 #e7e4f7;}
+.es-lens{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.es-l{border:2px solid #dcd8f5;background:#fff;border-radius:14px;padding:7px 4px;display:flex;
+  flex-direction:column;align-items:center;gap:1px;font-family:inherit;cursor:pointer;color:#4b3aad;
+  box-shadow:0 3px 0 #e7e4f7;line-height:1.15;}
+.es-l b{font-size:13px;font-weight:900;white-space:nowrap;}
+.es-l small{font-size:10px;font-weight:800;opacity:.72;}
+.es-l.on{border-color:#5b46c9;background:linear-gradient(135deg,#8b7cf6,#5b46c9);color:#fff;box-shadow:0 3px 0 #3d2f96;}
+.es-l:active{transform:translateY(2px);box-shadow:0 1px 0 #e7e4f7;}
+.es-info{font-size:11px;font-weight:800;color:#5f5b96;text-align:center;background:#efedff;border-radius:10px;
+  padding:7px 8px;line-height:1.4;}
+.es-go{border:0;border-radius:16px;padding:13px 8px;font-family:inherit;font-weight:900;font-size:17px;color:#fff;
+  background:linear-gradient(135deg,#8b7cf6,#4b3aad);cursor:pointer;
+  box-shadow:0 5px 0 #33247a,0 10px 22px rgba(75,58,173,.32);}
+.es-go:active{transform:translateY(3px);box-shadow:0 2px 0 #33247a;}
+.es-close{border:0;background:transparent;color:#8a86b8;font-family:inherit;font-weight:900;font-size:13px;
+  padding:2px;cursor:pointer;}
+
+/* ---------- 시험 화면 ---------- */
+#screenExam,#screenExamResult{align-items:center;justify-content:center;
+  background:radial-gradient(120% 90% at 50% 0%,#eef0ff 0%,#f7f8ff 55%,#fffdf3 100%);}
+.ex-col,.ex-res{position:relative;width:100%;max-width:560px;height:100%;display:flex;flex-direction:column;
+  background:#f7f8ff;overflow:hidden;box-shadow:0 0 0 1px rgba(40,60,150,.06),0 10px 44px rgba(30,50,140,.16);}
+.ex-bar{flex:0 0 auto;display:flex;align-items:center;gap:6px;
+  padding:calc(5px + env(safe-area-inset-top)) 8px 5px;
+  background:linear-gradient(#fff,#f1f0ff);border-bottom:2px solid #ddd9f5;}
+.ex-hbtn,.ex-sbtn{border:0;border-radius:11px;font-family:inherit;font-weight:900;cursor:pointer;
+  padding:6px 8px;font-size:11.5px;line-height:1.1;white-space:nowrap;}
+.ex-hbtn{background:#eef0ff;color:#5b46c9;box-shadow:0 3px 0 #dcd8f5;}
+.ex-sbtn{background:linear-gradient(135deg,#8b7cf6,#4b3aad);color:#fff;box-shadow:0 3px 0 #33247a;}
+.ex-hbtn:active,.ex-sbtn:active{transform:translateY(2px);box-shadow:none;}
+.ex-name{flex:1 1 auto;min-width:0;text-align:center;font-size:12.5px;font-weight:900;color:#2a2b6b;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ex-timer{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#2a2b6b;background:#fff;border:1.5px solid #ddd9f5;
+  border-radius:11px;padding:4px 7px;font-variant-numeric:tabular-nums;letter-spacing:.3px;}
+.ex-timer.warn{color:#fff;background:#e94b4b;border-color:#c93a3a;animation:exPulse 1s infinite;}
+@keyframes exPulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.ex-meta{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:5px 10px 5px;}
+.ex-count{font-size:11px;font-weight:900;color:#4b3aad;white-space:nowrap;}
+.ex-track{flex:1 1 auto;height:7px;border-radius:99px;background:#dfdcf3;overflow:hidden;}
+.ex-track i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#8b7cf6,#5b46c9);
+  transition:width .18s;}
+.ex-left{font-size:10.5px;font-weight:900;color:#8a86b8;white-space:nowrap;}
+.ex-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px;padding:0 10px 7px;}
+.ex-sheet{flex:0 1 auto;min-height:186px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  background:#fff;border-radius:16px;padding:11px 12px;border:1.5px solid #e4e1f6;
+  box-shadow:0 4px 14px rgba(50,40,120,.07);display:flex;flex-direction:column;gap:7px;
+  justify-content:center;}
+.ex-tag{align-self:flex-start;font-size:10.5px;font-weight:900;color:#fff;background:#5b46c9;border-radius:8px;
+  padding:3px 8px;letter-spacing:.3px;}
+.ex-ask{margin:0;font-size:13px;font-weight:800;color:#2a2b6b;line-height:1.42;word-break:keep-all;}
+.ex-note{margin:0;font-size:15px;font-weight:900;color:#1f2440;line-height:1.45;word-break:keep-all;
+  background:#fffaea;border:1.5px solid #ffe6a3;border-radius:12px;padding:8px 10px;}
+.ex-sent{margin:0;font-size:15.5px;font-weight:800;color:#243046;line-height:1.6;letter-spacing:.2px;word-break:keep-all;}
+.ex-sent em{font-style:normal;border-bottom:2.5px solid #f0b429;padding:0 1px;}
+.ex-hint{margin:0;font-size:11.5px;font-weight:800;color:#8a86b8;text-align:center;line-height:1.35;word-break:keep-all;}
+.ex-big{margin:2px 0;text-align:center;font-size:44px;font-weight:900;color:#1f2440;letter-spacing:3px;line-height:1.2;}
+.ex-big.sm{font-size:26px;letter-spacing:1.5px;color:#2a2b6b;}
+.ex-opts{flex:0 0 auto;display:flex;flex-direction:column;gap:7px;margin-bottom:auto;}
+.ex-opt{display:flex;align-items:center;gap:9px;width:100%;border:2px solid #e0dcf6;background:#fff;
+  border-radius:14px;padding:10px 11px;font-family:inherit;font-size:15px;font-weight:800;color:#243046;
+  text-align:left;cursor:pointer;box-shadow:0 3px 0 #eae7f8;line-height:1.3;word-break:keep-all;
+  transition:transform .07s,box-shadow .07s,background .15s;}
+.ex-opt .n{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:#f1efff;color:#5b46c9;font-size:12px;
+  font-weight:900;display:flex;align-items:center;justify-content:center;}
+.ex-opt .tx{flex:1 1 auto;min-width:0;}
+.ex-opt:active{transform:translateY(2px);box-shadow:0 1px 0 #eae7f8;}
+.ex-opt.sel{border-color:#5b46c9;background:linear-gradient(180deg,#f7f5ff,#eeebff);box-shadow:0 3px 0 #cfc9f0;}
+.ex-opt.sel .n{background:#5b46c9;color:#fff;}
+.ex-foot{flex:0 0 auto;display:flex;gap:8px;padding:0 10px 6px;}
+.ex-nav{flex:1 1 0;border:0;border-radius:14px;padding:11px 6px;font-family:inherit;font-weight:900;font-size:14px;
+  background:#fff;color:#4b3aad;box-shadow:0 3px 0 #dcd8f5;cursor:pointer;}
+.ex-nav.next{background:linear-gradient(135deg,#8b7cf6,#4b3aad);color:#fff;box-shadow:0 3px 0 #33247a;}
+.ex-nav:active{transform:translateY(2px);box-shadow:none;}
+.ex-nav:disabled{opacity:.45;}
+.ex-omr{flex:0 0 auto;display:flex;gap:4px;overflow-x:auto;overflow-y:hidden;padding:0 10px calc(7px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.ex-omr::-webkit-scrollbar{display:none;}
+.omr-n{flex:0 0 auto;width:23px;height:23px;border-radius:7px;border:1.5px solid #ddd9f5;background:#fff;
+  color:#9a97be;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer;padding:0;}
+.omr-n.done{background:#e8e3ff;border-color:#c9c1f2;color:#4b3aad;}
+.omr-n.cur{border-color:#f0b429;box-shadow:0 0 0 2px #ffe08a;color:#6a4100;background:#fffaea;}
+
+/* 시험 중 확인 창 */
+.ex-dlg{position:fixed;inset:0;z-index:240;display:flex;align-items:center;justify-content:center;padding:16px;
+  background:rgba(9,29,50,.66);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
+.ex-dlg-card{width:100%;max-width:300px;background:#fff;border-radius:20px;padding:16px 15px 13px;
+  display:flex;flex-direction:column;gap:6px;box-shadow:0 16px 40px rgba(4,20,40,.45);}
+.ex-dlg-t{margin:0;font-size:15px;font-weight:900;color:#2a2b6b;text-align:center;line-height:1.3;}
+.ex-dlg-d{margin:0 0 4px;font-size:12px;font-weight:800;color:#7a76a6;text-align:center;line-height:1.45;}
+.ex-dlg-btns{display:flex;gap:8px;}
+.ex-dlg-b{flex:1 1 0;border:0;border-radius:14px;padding:11px 6px;font-family:inherit;font-weight:900;font-size:14px;
+  cursor:pointer;}
+.ex-dlg-b.ghost{background:#eff0ff;color:#4b3aad;box-shadow:0 3px 0 #dcd8f5;}
+.ex-dlg-b.go{background:linear-gradient(135deg,#8b7cf6,#4b3aad);color:#fff;box-shadow:0 3px 0 #33247a;}
+.ex-dlg-b:active{transform:translateY(2px);box-shadow:none;}
+
+/* ---------- 결과 · 오답노트 ---------- */
+.ex-res-head{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:calc(9px + env(safe-area-inset-top)) 12px 8px;background:linear-gradient(#fff,#f4f2ff);
+  border-bottom:2px solid #e4e1f6;}
+.ex-badge{font-size:12px;font-weight:900;color:#fff;background:linear-gradient(135deg,#43cf8f,#13925f);
+  border-radius:99px;padding:4px 13px;box-shadow:0 3px 0 rgba(10,110,70,.32);letter-spacing:.3px;}
+.ex-badge.fail{background:linear-gradient(135deg,#ffa07a,#e0453a);box-shadow:0 3px 0 rgba(150,30,25,.3);}
+.ex-score{font-size:38px;font-weight:900;color:#2a2b6b;line-height:1.02;letter-spacing:-1.5px;}
+.ex-score span{font-size:15px;color:#8a86b8;font-weight:900;margin-left:2px;letter-spacing:0;}
+.ex-call{font-size:13.5px;font-weight:900;color:#4b3aad;text-align:center;line-height:1.3;word-break:keep-all;}
+.ex-sub{font-size:10.5px;font-weight:800;color:#8a86b8;text-align:center;line-height:1.3;}
+.ex-res-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:9px 10px 4px;display:flex;flex-direction:column;gap:8px;}
+.ex-bars{display:flex;flex-direction:column;gap:6px;background:#fff;border:1.5px solid #e4e1f6;border-radius:14px;
+  padding:9px 11px;box-shadow:0 3px 12px rgba(50,40,120,.06);}
+.ex-bar-row{display:flex;align-items:center;gap:7px;}
+.ex-bar-row .lb{flex:0 0 82px;font-size:11px;font-weight:900;color:#4b3aad;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ex-bar-row .tr{flex:1 1 auto;height:8px;border-radius:99px;background:#eceafa;overflow:hidden;}
+.ex-bar-row .tr i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8b7cf6,#5b46c9);}
+.ex-bar-row .tr i.low{background:linear-gradient(90deg,#ffb27a,#e0453a);}
+.ex-bar-row .vv{flex:0 0 auto;font-size:10.5px;font-weight:900;color:#6b68a8;font-variant-numeric:tabular-nums;}
+.ex-note-title{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:900;
+  color:#2a2b6b;padding:2px 2px 0;}
+.ex-note-title span{font-size:10.5px;font-weight:900;color:#8a86b8;}
+.ex-notes{display:flex;flex-direction:column;gap:7px;}
+.nt{background:#fff;border:1.5px solid #e4e1f6;border-left:4px solid #e0453a;border-radius:12px;padding:8px 10px;
+  display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 8px rgba(50,40,120,.05);}
+.nt-h{display:flex;align-items:center;gap:6px;}
+.nt-h b{font-size:11px;font-weight:900;color:#fff;background:#e0453a;border-radius:6px;padding:1px 6px;}
+.nt-h .tg{font-size:10.5px;font-weight:900;color:#5b46c9;}
+.nt-q{font-size:12.5px;font-weight:800;color:#243046;line-height:1.4;word-break:keep-all;}
+.nt-q em{font-style:normal;border-bottom:2px solid #f0b429;}
+.nt-a{display:flex;gap:5px;font-size:12px;font-weight:800;line-height:1.35;word-break:keep-all;}
+.nt-a .k{flex:0 0 auto;font-size:10px;font-weight:900;color:#8a86b8;padding-top:1px;}
+.nt-a .bad{color:#d33b2f;}
+.nt-a .good{color:#0f8a56;}
+.nt-e{font-size:11px;font-weight:800;color:#6b68a8;line-height:1.4;word-break:keep-all;
+  background:#f6f5ff;border-radius:8px;padding:5px 7px;}
+.ex-empty{font-size:13px;font-weight:900;color:#0f8a56;text-align:center;background:#eafff4;
+  border:1.5px solid #b6ebd2;border-radius:14px;padding:16px 10px;line-height:1.4;}
+.ex-res-foot{flex:0 0 auto;display:flex;gap:6px;padding:6px 10px calc(7px + env(safe-area-inset-bottom));
+  background:#f4f2ff;border-top:2px solid #e4e1f6;}
+.ex-res-foot button{flex:1 1 0;border:0;border-radius:14px;padding:11px 4px;font-family:inherit;font-weight:900;
+  font-size:12.5px;cursor:pointer;line-height:1.15;white-space:nowrap;}
+.ex-res-foot .f1{background:#fff;color:#4b3aad;box-shadow:0 3px 0 #dcd8f5;}
+.ex-res-foot .f2{background:#eef0ff;color:#4b3aad;box-shadow:0 3px 0 #dcd8f5;}
+.ex-res-foot .f3{background:linear-gradient(135deg,#8b7cf6,#4b3aad);color:#fff;box-shadow:0 3px 0 #33247a;}
+.ex-res-foot button:active{transform:translateY(2px);box-shadow:none;}
+
 </style>
 </head>
 <body>
@@ -543,6 +712,14 @@ body{
         <button class="hz-btn" type="button" data-hz="6"><b>6급</b><small>중급 75자</small></button>
         <button class="hz-btn" type="button" data-hz="5"><b>5급</b><small>심화 100자</small></button>
       </div>
+
+      <button class="mode-card m-exam" data-mode="exam" type="button">
+        <span class="mc-emoji">📝</span>
+        <span class="mc-txt">한자 급수 모의고사
+          <span class="mc-sub">한국어문회 8·7·6·5급 실전 형식</span>
+        </span>
+        <span class="mc-best gold" id="exBest">8급 첫 도전</span>
+      </button>
 
       <div class="hero-set">
         <input class="hero-file" id="heroPhotoInput" type="file" accept="image/*" aria-label="주인공 사진 고르기">
@@ -701,6 +878,72 @@ body{
    </div>
   </section>
 
+  <!-- ================= 📝 한자 급수 모의고사 ================= -->
+  <section id="screenExam" class="screen" hidden>
+   <div class="ex-col">
+    <div class="ex-bar">
+      <button class="ex-hbtn" id="exQuit" type="button">그만하기</button>
+      <div class="ex-name" id="exName">📝 8급 모의고사</div>
+      <div class="ex-timer" id="exTimer">50:00</div>
+      <button class="ex-sbtn" id="exSubmitTop" type="button">제출하기</button>
+    </div>
+    <div class="ex-meta">
+      <span class="ex-count" id="exCount">1 / 50</span>
+      <div class="ex-track"><i id="exBar"></i></div>
+      <span class="ex-left" id="exLeft">안 푼 50</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-sheet" id="exSheet">
+        <span class="ex-tag" id="exTag">[독음]</span>
+        <p class="ex-ask" id="exAsk">다음 한자어의 독음을 고르세요.</p>
+        <p class="ex-note" id="exNote" hidden></p>
+        <p class="ex-sent" id="exSent" hidden></p>
+        <div class="ex-big" id="exBig" hidden></div>
+        <p class="ex-hint" id="exHint" hidden></p>
+      </div>
+      <div class="ex-opts" id="exOpts"></div>
+    </div>
+    <div class="ex-foot">
+      <button class="ex-nav" id="exPrev" type="button">◀ 이전</button>
+      <button class="ex-nav next" id="exNext" type="button">다음 ▶</button>
+    </div>
+    <div class="ex-omr" id="exOmr" role="group" aria-label="답안 빠른 이동"></div>
+   </div>
+
+   <div class="ex-dlg" id="exDlg" hidden>
+     <div class="ex-dlg-card">
+       <p class="ex-dlg-t" id="exDlgT">제출할까요?</p>
+       <p class="ex-dlg-d" id="exDlgD"></p>
+       <div class="ex-dlg-btns">
+         <button class="ex-dlg-b ghost" id="exDlgNo" type="button">계속 풀기</button>
+         <button class="ex-dlg-b go" id="exDlgYes" type="button">제출하기</button>
+       </div>
+     </div>
+   </div>
+  </section>
+
+  <!-- ================= 결과 · 오답노트 ================= -->
+  <section id="screenExamResult" class="screen" hidden>
+   <div class="ex-res">
+    <div class="ex-res-head">
+      <div class="ex-badge" id="rvBadge">합격</div>
+      <div class="ex-score" id="rvScore">42<span>/50</span></div>
+      <div class="ex-call" id="rvCall">8급 모의고사 합격!</div>
+      <div class="ex-sub" id="rvSub">합격 기준 35문항 (70%)</div>
+    </div>
+    <div class="ex-res-scroll" id="rvScroll">
+      <div class="ex-bars" id="rvBars"></div>
+      <div class="ex-note-title">오답노트 <span id="rvNoteCount">0문항</span></div>
+      <div class="ex-notes" id="rvNotes"></div>
+    </div>
+    <div class="ex-res-foot">
+      <button class="f1" id="rvRetry" type="button">다시 풀기</button>
+      <button class="f2" id="rvNew" type="button">급수 바꾸기</button>
+      <button class="f3" id="rvHome" type="button">홈으로</button>
+    </div>
+   </div>
+  </section>
+
   <div class="overlay" id="overlay" hidden></div>
 
   <!-- ================= 얼굴 맞추기 ================= -->
@@ -726,6 +969,33 @@ body{
     </div>
   </div>
 </div>
+ <div class="exam-setup" id="examSetup" role="dialog" aria-modal="true" aria-labelledby="esTitle" hidden>
+  <div class="es-card">
+   <div>
+     <h2 class="es-title" id="esTitle">📝 한자 급수 모의고사</h2>
+     <p class="es-sub">한국어문회 8·7·6·5급 실전 형식</p>
+   </div>
+   <div>
+     <span class="es-cap">급수</span>
+     <div class="es-grades" id="esGrades" role="group" aria-label="급수 선택">
+       <button class="es-g on" data-g="8" type="button"><b>8급</b><small>50자</small><i data-exbest="8">첫 도전</i></button>
+       <button class="es-g" data-g="7" type="button"><b>7급</b><small>100자</small><i data-exbest="7">첫 도전</i></button>
+       <button class="es-g" data-g="6" type="button"><b>6급</b><small>175자</small><i data-exbest="6">첫 도전</i></button>
+       <button class="es-g" data-g="5" type="button"><b>5급</b><small>275자</small><i data-exbest="5">첫 도전</i></button>
+     </div>
+   </div>
+   <div>
+     <span class="es-cap">문항 · 시간</span>
+     <div class="es-lens" id="esLens" role="group" aria-label="문항 수 선택">
+       <button class="es-l on" data-len="mini" type="button"><b>미니 20문항</b><small>15분</small></button>
+       <button class="es-l" data-len="full" type="button"><b>실전 50문항</b><small>50분</small></button>
+     </div>
+   </div>
+   <div class="es-info" id="esInfo"></div>
+   <button class="es-go" id="esGo" type="button">시험 시작 ▶</button>
+   <button class="es-close" id="esClose" type="button">닫기</button>
+  </div>
+ </div>
 
 <script>
 (function(){
@@ -3445,6 +3715,10 @@ function refreshTitleBests(){
   if(hv > all) all = hv;
   var hel = document.querySelector('[data-best="hanja"]');
   if(hel) hel.textContent = S.hanjaSel + '급 최고 ' + hv + '점';
+  /* 📝 모의고사 — 급수별 최고 점수(100점 만점) */
+  var ev = exBestAll();
+  if(ev > all) all = ev;
+  exTitleBadge();
 
   var be = $('bestAll');
   if(be) be.textContent = all;
@@ -3578,6 +3852,12 @@ function soundIcon(){
 }
 
 function toTitle(){
+  EX.running = false;
+  exStopTimer();
+  if(elExam) elExam.hidden = true;
+  if(elExamRes) elExamRes.hidden = true;
+  if(elExamSetup) elExamSetup.hidden = true;
+  if(elExDlg) elExDlg.hidden = true;
   S.running = false;
   S.paused = false;
   S.targetId = null;
@@ -3643,6 +3923,921 @@ function startGame(mode){
 }
 
 /* =========================================================
+   📝 한자 급수 모의고사 — 한국어문회 실전 형식 데이터
+   EXAM_SENT   : 한자어 → 문장 속 빈자리(앞, 뒤)
+   EXAM_DEF    : 한자어 → 뜻풀이
+   EXAM_ANT    : [글자, 반대 글자, 종류(반의어·상대어)]
+   EXAM_SYN    : [글자, 비슷한 뜻 글자, 겹치는 뜻]
+   EXAM_IDIOM  : [사자성어, 독음, 뜻, 빈칸 위치]
+   EXAM_STROKE : 글자 → [총 획수, 첫 획]
+   ========================================================= */
+var EXAM_SENT = {"校門":["아침에 ","에서 친구를 만났다."],"敎室":["우리 ","에서 공부한다."],"九月":["","에 새 학기가 시작된다."],"國語":[""," 시간에 책을 읽었다."],"軍人":["삼촌은 ","이 되셨다."],"現金":["가게에서 ","으로 값을 치렀다."],"南北":["","이 하나가 되기를 바란다."],"男女":["","가 함께 운동장을 달렸다."],"一年":["","은 열두 달이다."],"大韓":["","민국의 수도는 서울이다."],"東海":["여름에 ","에서 수영했다."],"六十":["할아버지는 올해 ","세이시다."],"萬歲":["모두 함께 ","를 외쳤다."],"母國":["나는 ","인 한국을 사랑한다."],"木材":["","로 책상을 만들었다."],"大門":["집 "," 앞에서 만나자."],"國民":["모든 ","이 행복해야 한다."],"白雪":["산 위에 ","이 쌓였다."],"父母":["","님께 감사드린다."],"北韓":["","과 남한은 한 민족이다."],"四月":["","에는 벚꽃이 핀다."],"山水":["","가 아름다운 고장이다."],"三國":[""," 시대의 이야기를 읽었다."],"學生":["","은 아침에 학교에 간다."],"西海":[""," 바다로 해가 진다."],"先生":["","님께 인사를 드렸다."],"水道":["","에서 시원한 물이 나온다."],"室內":["","에서는 뛰지 마세요."],"十字":["길이 ","로 갈라진다."],"五月":["","에는 가정의 달 행사가 있다."],"王國":["옛날에 작은 ","이 있었다."],"外國":["","에 사는 친구에게 편지를 썼다."],"正月":[""," 대보름에 쥐불놀이를 했다."],"二月":["","에 졸업식이 있다."],"人口":["이 도시의 ","는 아주 많다."],"一生":["할아버지는 ","을 바르게 사셨다."],"日記":["잠들기 전에 ","를 썼다."],"長男":["아버지는 집안의 ","이시다."],"弟子":["선생님의 ","가 아주 많다."],"中心":["마을 ","에 큰 나무가 있다."],"靑年":["","들이 힘을 모았다."],"寸數":["우리는 ","로 사촌 사이이다."],"七月":["","부터 여름 방학이다."],"土地":["농부가 ","을 일군다."],"八月":["","에 바다로 여행을 갔다."],"學校":["내일 ","에 간다."],"韓國":["","의 사계절은 아름답다."],"兄弟":["우리는 "," 사이이다."],"火山":["","이 연기를 내뿜었다."],"歌手":["그는 인기 있는 ","이다."],"入口":["건물 ","에서 만나자."],"國旗":["하늘 높이 ","가 휘날린다."],"同時":["두 사람이 ","에 도착했다."],"洞窟":["산속 ","을 구경했다."],"冬至":["","에는 팥죽을 먹는다."],"登校":["아침 일곱 시에 ","한다."],"未來":["","의 꿈을 이야기했다."],"老人":["","에게 자리를 양보했다."],"萬里":["","를 달려 고향에 갔다."],"山林":["","을 보호해야 한다."],"面會":["병원에서 할머니와 ","를 했다."],"生命":["","은 소중하다."],"文化":["우리 ","를 널리 알리자."],"問答":["선생님과 ","을 나누었다."],"百姓":["","이 편히 사는 나라를 만들자."],"工夫":["매일 ","를 열심히 한다."],"計算":["빠르게 ","을 끝냈다."],"特色":["이 고장의 ","을 찾았다."],"夕陽":["","이 바다로 진다."],"少年":["","이 공을 차고 있다."],"住所":["봉투에 ","를 적었다."],"數學":[""," 문제를 풀었다."],"植物":["","에게 물을 주었다."],"英語":["매일 ","를 공부한다."],"自然":["","을 사랑해야 한다."],"教育":["좋은 ","이 나라의 힘이다."],"邑內":[""," 시장에 갔다."],"入學":["초등학교에 ","했다."],"漢字":["","를 하나씩 익힌다."],"祖父":["","님께서 농사를 지으신다."],"住民":["마을 ","이 힘을 모았다."],"主人":["이 집의 ","은 친절하다."],"重要":["안전은 무엇보다 ","하다."],"白紙":[""," 위에 그림을 그렸다."],"三千":["길에서 "," 원을 주웠다."],"天下":["","를 다스리는 왕이 되었다."],"山川":["","이 고운 봄 풍경이다."],"花草":["마당에 ","를 심었다."],"山村":["조용한 ","에서 살았다."],"秋夕":["","에는 송편을 빚는다."],"青春":["","을 마음껏 누려라."],"出入":["이 문은 "," 금지이다."],"便紙":["할머니께 ","를 썼다."],"夏服":["여름에는 ","을 입는다."],"花園":["넓은 ","을 거닐었다."],"休日":["","에는 가족과 지낸다."],"感情":["그는 ","이 깊은 사람이다."],"公開":["자료를 모두 ","했다."],"古代":["","의 유물을 박물관에서 보았다."],"苦生":["어머니는 어릴 때 ","을 많이 하셨다."],"交流":["두 나라가 ","를 시작했다."],"區分":["쓰레기를 ","해서 버린다."],"根氣":["그는 ","가 세다."],"近年":["","에 마을이 많이 밝아졌다."],"高級":[""," 승용차를 탔다."],"多數":["","의 의견을 따랐다."],"期待":["그 선수에게 ","가 크다."],"年度":["올해 "," 계획을 세웠다."],"頭痛":["","이 심해 약을 먹었다."],"禮節":["어른께 ","을 지켜 인사했다."],"道路":["","를 따라 걸었다."],"綠色":["산이 ","으로 물들었다."],"耳目":["그 소식에 모두의 ","을 끌었다."],"美人":["그림 속 ","이 미소 짓는다."],"白米":["","로 지은 밥은 맛있다."],"番地":["봉투에 ","를 또박또박 적었다."],"病院":["아파서 ","에 갔다."],"衣服":["겨울용 ","을 꺼냈다."],"使用":["이 기계의 "," 방법을 익혔다."],"生死":["","를 함께한 친구다."],"出席":["오늘 회의에 ","했다."],"化石":["박물관에서 ","을 보았다."],"速度":["차의 ","를 줄였다."],"樹木":["","을 아끼고 가꾼다."],"學習":["매일 ","을 게을리하지 않는다."],"勝利":["마지막 경기에서 ","했다."],"失敗":["","해도 다시 도전한다."],"愛國":["","하는 마음을 가졌다."],"夜間":["","에는 조용히 해 주세요."],"野球":["친구들과 ","를 했다."],"言語":["","는 생각을 담는 그릇이다."],"溫度":["방의 ","를 올렸다."],"公園":["주말에 ","에서 놀았다."],"理由":["늦은 ","를 말했다."],"銀行":["","에 돈을 맡겼다."],"現在":[""," 시각은 세 시다."],"太陽":["","이 환하게 비친다."],"交通":["","이 막혀 늦었다."],"特別":["","한 날이었다."],"合格":["시험에 ","했다."],"方向":["오른쪽 ","으로 걸었다."],"番號":["내 ","를 불렀다."],"畫家":["그는 유명한 ","이다."],"敎訓":["옛이야기에서 ","을 얻었다."],"加入":["동아리에 ","했다."],"可能":["그 일은 ","하다."],"改正":["규칙을 ","했다."],"過去":["","를 돌아보았다."],"事件":["큰 ","이 일어났다."],"建物":["높은 ","이 보인다."],"健康":["","이 가장 중요하다."],"競爭":["치열한 ","이 이어졌다."],"風景":["바다 ","이 아름답다."],"參考":["자료를 ","했다."],"曲線":["길이 ","으로 굽는다."],"大橋":["","를 건너갔다."],"救急":[""," 환자를 실었다."],"貴重":["","한 자료를 보관했다."],"規則":["","을 지켜야 한다."],"給食":["오늘 ","은 비빔밥이다."],"汽車":["","를 타고 고향에 갔다."],"技術":["뛰어난 ","을 배웠다."],"相談":["선생님과 ","을 했다."],"半島":["한반도는 큰 ","이다."],"冷水":["","에 수건을 적셨다."],"分量":["음식의 ","이 많다."],"命令":["왕의 ","을 따랐다."],"月末":["","에 정산을 한다."],"死亡":["사고로 ","했다."],"比較":["두 작품을 ","했다."],"費用":["여행 ","을 모았다."],"寫眞":["가족 ","을 찍었다."],"調査":["원인을 ","했다."],"順序":["","대로 차례로 들어갔다."],"改善":["생활을 ","했다."],"選手":["그 ","는 아주 빠르다."],"展示":["작품을 ","했다."],"案內":["","를 따라 걸었다."],"魚類":["바다 ","을 관찰했다."],"熱心":["","히 공부했다."],"落葉":["","이 바람에 날린다."],"完全":["","히 고쳐졌다."],"曜日":["오늘은 무슨 ","일까?"],"浴室":["","을 청소했다."],"牛乳":["","를 한 잔 마셨다."],"英雄":["그는 마을의 ","이다."],"原則":["","을 지켰다."],"原因":["","을 찾아냈다."],"災害":["","를 막아야 한다."],"停車":["버스가 ","했다."],"中止":["경기를 ","했다."],"鐵道":["","가 마을을 지난다."],"最初":["","에 온 사람이다."],"最高":[""," 기록을 세웠다."],"祝賀":["졸업을 ","했다."],"一致":["의견이 ","했다."],"法則":["자연의 ","을 배웠다."],"他人":["","에게 피해를 주지 마라."],"打擊":["공을 세게 ","했다."],"卓球":["","를 배우러 갔다."],"石炭":["","을 태워 불을 땠다."],"黑板":["","에 이름을 썼다."],"許可":["","를 받아야 한다."],"湖水":["","가 잔잔하다."],"患者":["","를 정성껏 돌보았다."],"黑白":[""," 사진을 좋아한다."]};
+var EXAM_DEF = {"校門":"학교의 큰 문","敎室":"학생들이 공부하는 방","九月":"한 해의 아홉째 달","國語":"우리 나라의 말","軍人":"나라를 지키는 사람","現金":"바로 내는 돈","南北":"남쪽과 북쪽","男女":"남자와 여자","一年":"한 해 (열두 달)","大韓":"우리 나라를 이르는 이름","東海":"우리 나라 동쪽에 있는 바다","六十":"예순 (60)","萬歲":"오래오래 살라는 뜻으로 외치는 소리","母國":"태어나 자란 나라","木材":"나무로 만든 재료","大門":"집 바깥의 큰 문","國民":"나라를 이루는 사람들","白雪":"하얀 눈","父母":"아버지와 어머니","北韓":"한반도의 북쪽 지역","四月":"한 해의 네째 달","山水":"산과 물 (자연의 경치)","三國":"세 나라","學生":"학교에서 공부하는 사람","西海":"우리 나라 서쪽에 있는 바다","先生":"학생을 가르치는 사람","大小":"큰 것과 작은 것","水道":"물이 흐르는 길","室內":"방이나 건물의 안","十字":"열(十) 모양으로 된 것","五月":"한 해의 다섯째 달","王國":"임금이 다스리는 나라","外國":"다른 나라","正月":"한 해의 첫째 달","二月":"한 해의 둘째 달","人口":"한 나라에 사는 사람의 수","一生":"태어나서 죽을 때까지의 삶","日記":"날마다 있었던 일을 적는 기록","長男":"맏아들","弟子":"스승에게 배우는 사람","中心":"한가운데","靑年":"젊은 사람","寸數":"친척 사이의 멀고 가까운 정도","七月":"한 해의 일곱째 달","土地":"땅","八月":"한 해의 여덟째 달","學校":"학생이 공부하는 곳","韓國":"우리 나라의 이름","兄弟":"형과 아우","火山":"불을 뿜는 산","歌手":"노래를 부르는 사람","入口":"들어가는 곳","國旗":"나라를 나타내는 깃발","同時":"같은 때","洞窟":"땅속에 길게 뚫린 굴","冬至":"밤이 가장 긴 겨울날","登校":"학교에 감","未來":"앞으로 다가올 때","老人":"나이가 많은 사람","萬里":"아주 먼 거리","山林":"산과 숲","面會":"병원이나 감옥에서 만나 봄","生命":"살아 있는 힘","文化":"한 사회가 이룬 생활과 예술","問答":"묻고 답함","百姓":"나라를 이루는 일반 사람들","工夫":"배우고 익힘","計算":"셈을 함","特色":"남다른 특징","夕陽":"저녁에 지는 해","少年":"나이가 어린 남자아이","住所":"사는 곳의 위치","數學":"수와 셈을 다루는 학문","植物":"땅에 뿌리를 내리고 사는 것","英語":"영국과 미국 사람이 쓰는 말","自然":"사람이 만들지 않은 모든 것","教育":"가르치고 기름","邑內":"읍의 안쪽 마을","入學":"학교에 처음 들어감","漢字":"중국에서 비롯된 글자","祖父":"할아버지","住民":"그곳에 사는 사람","主人":"물건이나 집을 가진 사람","重要":"꼭 필요하고 소중함","白紙":"아무것도 쓰지 않은 흰 종이","三千":"3000","天下":"온 세상","山川":"산과 내","花草":"꽃과 풀","山村":"산속에 있는 마을","秋夕":"음력 팔월 보름의 명절","青春":"젊은 시절","出入":"나가고 들어감","便紙":"글로 써서 보내는 안부","夏服":"여름에 입는 옷","花園":"꽃을 가꾸는 정원","休日":"일을 쉬는 날","感情":"느끼는 마음","公開":"여러 사람에게 보여 줌","古代":"아주 오랜 옛날","苦生":"어렵고 힘든 일","交流":"서로 오고 감","區分":"종류별로 나눔","根氣":"참고 견디는 힘","近年":"요 몇 해","高級":"수준이 높음","多數":"많은 수","期待":"좋은 일이 있기를 바람","年度":"한 해의 차례","頭痛":"머리가 아픈 병","禮節":"공손하게 행동하는 법","道路":"사람과 차가 다니는 길","綠色":"풀과 나뭇잎 같은 색","耳目":"귀와 눈 (남의 관심)","美人":"아름다운 사람","白米":"흰 쌀","番地":"집의 위치를 나타내는 숫자","病院":"아픈 사람을 고치는 곳","衣服":"몸에 입는 옷","使用":"쓰임","生死":"삶과 죽음","出席":"자리에 나옴","化石":"옛 생물이 돌로 굳은 것","速度":"빠르기의 정도","樹木":"나무","學習":"배우고 익힘","勝利":"이김","失敗":"일을 이루지 못함","愛國":"나라를 사랑함","夜間":"밤사이","野球":"공과 방망이로 하는 운동","言語":"말","溫度":"따뜻하고 차가운 정도","公園":"쉬고 즐기는 넓은 곳","理由":"그렇게 된 까닭","銀行":"돈을 맡아 두는 곳","現在":"지금 이때","太陽":"해","交通":"차와 사람이 다님","特別":"보통과 다름","合格":"시험에 붙음","方向":"나아가는 쪽","番號":"차례를 나타내는 숫자","畫家":"그림을 그리는 사람","敎訓":"가르쳐 주는 깨달음","加入":"새로 들어감","可能":"할 수 있음","改正":"잘못을 고쳐 바꿈","過去":"지나간 때","事件":"일어난 일","建物":"지어 놓은 집","健康":"몸과 마음이 튼튼함","競爭":"이기려고 다툼","風景":"눈에 보이는 자연의 모습","參考":"살펴보고 도움을 받음","曲線":"굽은 선","大橋":"크게 놓은 다리","救急":"급한 일을 구함","貴重":"매우 소중함","規則":"지켜야 할 법","給食":"학교에서 주는 밥","汽車":"철로 위를 달리는 차","技術":"재주와 솜씨","相談":"서로 의논함","首都":"나라의 중심 도시","半島":"바다로 튀어나온 땅","冷水":"차가운 물","分量":"무게나 양","命令":"시키는 말","月末":"달의 끝 무렵","死亡":"죽음","比較":"견주어 봄","費用":"쓰는 돈","寫眞":"빛으로 찍은 그림","調査":"자세히 살펴봄","順序":"차례","改善":"더 좋게 고침","選手":"운동 경기를 하는 사람","展示":"펼쳐 보임","案內":"잘 알게 이끌어 줌","魚類":"물고기 종류","熱心":"마음을 다함","落葉":"떨어진 잎","完全":"빠짐없이 온전함","曜日":"월요일부터 일요일까지의 이름","浴室":"씻는 방","牛乳":"소의 젖","英雄":"뛰어나고 훌륭한 사람","原則":"꼭 지켜야 하는 기본","原因":"일이 생긴 까닭","災害":"자연이 남긴 피해","停車":"차가 멈춤","中止":"하던 일을 멈춤","鐵道":"기차가 다니는 길","最初":"맨 처음","最高":"가장 높음","祝賀":"기쁜 일을 함께 기뻐함","一致":"서로 같음","法則":"반드시 지켜지는 규칙","他人":"다른 사람","打擊":"때림","卓球":"작은 공으로 하는 운동","石炭":"땅속에서 나는 검은 연료","黑板":"분필로 글을 쓰는 검은 판","許可":"하라고 허락함","湖水":"땅에 둘러싸인 큰 물","患者":"병으로 고통받는 사람","黑白":"검은색과 흰색"};
+var EXAM_ANT = [["大","小","반의어"],["多","少","반의어"],["出","入","반의어"],["來","去","반의어"],["買","賣","반의어"],["生","死","반의어"],["勝","敗","반의어"],["有","無","반의어"],["遠","近","반의어"],["白","黑","반의어"],["熱","寒","반의어"],["冷","熱","반의어"],["晝","夜","반의어"],["輕","重","반의어"],["終","初","반의어"],["東","西","반의어"],["南","北","반의어"],["春","秋","상대어"],["夏","冬","상대어"],["天","地","상대어"],["父","母","상대어"],["兄","弟","상대어"]];
+var EXAM_SYN = [["木","樹","나무"],["水","河","물"],["言","語","말씀"],["思","考","생각"],["寒","冷","차다"],["終","末","끝"],["都","邑","도읍·고을"],["京","都","서울·도읍"],["民","族","백성·겨레"]];
+var EXAM_IDIOM = [["一石二鳥","일석이조","돌 하나로 새 두 마리를 잡는다 · 한 번에 두 가지를 얻음",1,["木","金","土"]],["二人三脚","이인삼각","두 사람이 세 발로 달린다 · 여럿이 함께 힘을 모음",0,["五","六","七"]],["大器晩成","대기만성","큰 그릇은 늦게 이루어진다 · 큰 인물은 늦게 성공함",0,["小","中","長"]],["山川草木","산천초목","산과 내, 풀과 나무 · 자연의 모든 것",2,["花","樹","林"]],["春夏秋冬","춘하추동","봄·여름·가을·겨울 · 한 해의 네 계절",1,["年","月","日"]],["東西南北","동서남북","동쪽·서쪽·남쪽·북쪽 · 사방",2,["中","外","山"]],["靑山綠水","청산녹수","푸른 산과 맑은 물 · 아름다운 자연",2,["白","黑","赤"]],["一日三秋","일일삼추","하루가 삼 년 같다 · 기다리는 마음이 간절함",3,["春","冬","夏"]],["一日千里","일일천리","하루에 천 리를 간다 · 매우 빠름",3,["百","萬","寸"]],["有備無患","유비무환","미리 준비하면 근심이 없다",2,["多","少","大"]],["一言九鼎","일언구정","한마디 말이 솥 아홉 개처럼 무겁다 · 말의 무게",1,["語","文","問"]],["他山之石","타산지석","다른 산의 돌 · 남의 허물도 나를 고치는 데 도움이 됨",3,["木","金","土"]],["溫故知新","온고지신","옛것을 익혀 새것을 안다",0,["冷","寒","熱"]],["山高水長","산고수장","산은 높고 물은 길다 · 덕이 높고 넓음",1,["大","小","重"]],["十人十色","십인십색","열 사람 열 가지 색 · 사람마다 생각이 다름",3,["白","黑","靑"]]];
+var EXAM_STROKE = {"一":[1,"가로"],"二":[2,"가로"],"三":[3,"가로"],"十":[2,"가로"],"七":[2,"가로"],"九":[2,"왼쪽 삐침"],"人":[2,"왼쪽 삐침"],"八":[2,"왼쪽 삐침"],"大":[3,"가로"],"小":[3,"세로"],"山":[3,"세로"],"川":[3,"왼쪽 삐침"],"土":[3,"가로"],"寸":[3,"가로"],"四":[5,"세로"],"五":[4,"가로"],"六":[4,"점"],"王":[4,"가로"],"月":[4,"왼쪽 삐침"],"日":[4,"세로"],"中":[4,"세로"],"木":[4,"가로"],"水":[4,"세로"],"火":[4,"점"],"白":[5,"왼쪽 삐침"],"生":[5,"왼쪽 삐침"],"出":[5,"세로"],"北":[5,"세로"],"外":[5,"왼쪽 삐침"],"年":[6,"왼쪽 삐침"],"先":[6,"왼쪽 삐침"],"金":[8,"왼쪽 삐침"],"門":[8,"세로"],"學":[16,"왼쪽 삐침"],"校":[10,"가로"],"國":[11,"세로"],"軍":[9,"점"],"東":[8,"가로"],"南":[9,"가로"],"西":[6,"가로"],"靑":[8,"가로"],"兄":[5,"세로"],"室":[9,"점"],"萬":[12,"가로"],"父":[4,"왼쪽 삐침"],"口":[3,"세로"],"心":[4,"점"],"天":[4,"가로"],"千":[3,"왼쪽 삐침"],"草":[9,"가로"],"花":[7,"가로"],"春":[9,"가로"],"秋":[9,"왼쪽 삐침"],"夏":[10,"가로"],"冬":[5,"왼쪽 삐침"],"入":[2,"왼쪽 삐침"],"便":[9,"왼쪽 삐침"],"休":[6,"왼쪽 삐침"],"林":[8,"가로"],"村":[7,"가로"],"面":[9,"가로"],"文":[4,"점"],"字":[6,"점"],"住":[7,"왼쪽 삐침"],"主":[5,"점"],"重":[9,"왼쪽 삐침"],"地":[6,"가로"],"來":[8,"가로"],"老":[6,"가로"],"少":[4,"세로"],"色":[6,"왼쪽 삐침"],"夕":[3,"왼쪽 삐침"],"百":[6,"가로"],"算":[14,"왼쪽 삐침"],"語":[14,"점"],"言":[7,"점"],"育":[8,"점"],"邑":[7,"세로"],"有":[6,"가로"],"然":[12,"왼쪽 삐침"],"歌":[14,"가로"],"同":[6,"세로"],"洞":[9,"점"],"旗":[14,"점"],"感":[13,"가로"],"開":[12,"세로"],"京":[8,"점"],"古":[5,"가로"],"交":[6,"점"],"近":[7,"왼쪽 삐침"],"多":[6,"왼쪽 삐침"],"度":[9,"점"],"頭":[16,"가로"],"病":[10,"점"],"本":[5,"가로"],"米":[6,"점"],"目":[5,"세로"],"石":[5,"가로"],"死":[6,"가로"],"夜":[8,"점"],"野":[11,"세로"],"衣":[6,"점"],"定":[8,"점"],"朝":[12,"가로"],"合":[6,"왼쪽 삐침"],"行":[6,"왼쪽 삐침"],"向":[6,"왼쪽 삐침"],"黃":[12,"가로"],"訓":[10,"점"],"根":[10,"가로"],"區":[11,"가로"],"苦":[8,"가로"],"待":[9,"왼쪽 삐침"],"例":[8,"왼쪽 삐침"],"路":[13,"세로"],"李":[7,"가로"],"美":[9,"점"],"番":[12,"왼쪽 삐침"],"別":[7,"세로"],"服":[8,"왼쪽 삐침"],"使":[8,"왼쪽 삐침"],"席":[10,"점"],"速":[10,"가로"],"樹":[16,"가로"],"勝":[12,"왼쪽 삐침"],"式":[6,"가로"],"失":[5,"왼쪽 삐침"],"愛":[13,"왼쪽 삐침"],"洋":[9,"점"],"英":[8,"가로"],"永":[5,"점"],"溫":[13,"점"],"園":[13,"세로"],"遠":[13,"가로"],"由":[5,"세로"],"油":[8,"점"],"銀":[14,"왼쪽 삐침"],"者":[8,"가로"],"章":[11,"점"],"在":[6,"가로"],"族":[11,"점"],"晝":[11,"가로"],"親":[16,"점"],"太":[4,"가로"],"特":[10,"왼쪽 삐침"],"畫":[12,"가로"],"可":[5,"가로"],"去":[5,"가로"],"件":[6,"왼쪽 삐침"],"健":[11,"왼쪽 삐침"],"輕":[14,"가로"],"景":[12,"세로"],"考":[6,"가로"],"固":[8,"세로"],"曲":[6,"세로"],"橋":[16,"가로"],"貴":[12,"세로"],"規":[11,"가로"],"汽":[7,"점"],"期":[12,"가로"],"技":[7,"가로"],"吉":[6,"가로"],"壇":[16,"가로"],"談":[15,"점"],"都":[11,"가로"],"島":[10,"왼쪽 삐침"],"落":[12,"가로"],"冷":[7,"점"],"量":[12,"세로"],"領":[14,"왼쪽 삐침"],"令":[5,"왼쪽 삐침"],"料":[10,"점"],"命":[8,"왼쪽 삐침"],"末":[5,"가로"],"亡":[3,"점"],"買":[12,"세로"],"賣":[15,"가로"],"無":[12,"왼쪽 삐침"],"倍":[10,"왼쪽 삐침"],"比":[4,"가로"],"鼻":[14,"왼쪽 삐침"],"氷":[5,"점"],"寫":[15,"점"],"思":[9,"세로"],"査":[9,"가로"],"序":[7,"왼쪽 삐침"],"善":[12,"점"],"船":[11,"왼쪽 삐침"],"示":[5,"가로"],"案":[10,"점"],"漁":[14,"점"],"魚":[11,"왼쪽 삐침"],"億":[15,"왼쪽 삐침"],"葉":[12,"가로"],"完":[7,"점"],"曜":[18,"세로"],"浴":[10,"점"],"牛":[4,"왼쪽 삐침"],"雄":[12,"가로"],"原":[10,"가로"],"願":[19,"가로"],"位":[7,"왼쪽 삐침"],"耳":[6,"가로"],"因":[6,"세로"],"再":[6,"가로"],"爭":[8,"왼쪽 삐침"],"貯":[12,"세로"],"赤":[7,"가로"],"停":[11,"왼쪽 삐침"],"操":[16,"가로"],"罪":[13,"세로"],"止":[4,"세로"],"唱":[11,"세로"],"鐵":[21,"왼쪽 삐침"],"初":[7,"점"],"最":[12,"가로"],"祝":[9,"가로"],"致":[9,"가로"],"則":[9,"세로"],"他":[5,"왼쪽 삐침"],"打":[5,"가로"],"卓":[8,"세로"],"炭":[9,"세로"],"板":[8,"가로"],"敗":[8,"세로"],"河":[8,"점"],"寒":[12,"점"],"許":[11,"점"],"湖":[12,"점"],"患":[11,"세로"],"黑":[12,"세로"]};
+
+/* =========================================================
+   📝 한자 급수 모의고사 — 한국어문회 출제 기준 (8·7·6·5급)
+   ========================================================= */
+var EX_ORDER = [8, 7, 6, 5];
+var EX_META = {
+  8: { full:50, cut:35 },
+  7: { full:70, cut:49 },
+  6: { full:90, cut:63 },
+  5: { full:100, cut:70 }
+};
+var EX_MIN_N = 20;              /* 미니 모의고사 문항 수 */
+var EX_MINI_MIN = 15;           /* 미니 15분 · 실전 50분 */
+var EX_FULL_MIN = 50;
+var EX_MINI_CUT = 14;           /* 20문항의 70% */
+
+/* 문항 구성 — 독음·훈음이 중심, 급수가 높을수록 어휘·사자성어 비중이 커진다 */
+var EX_SPEC = {
+  8: { reading:15, huneum:15, find:10, ant:5, stroke:5 },
+  7: { reading:18, huneum:18, find:12, ant:8, idiom:6, def:5, stroke:3 },
+  6: { reading:20, huneum:20, find:16, ant:10, syn:6, idiom:8, def:7, stroke:3 },
+  5: { reading:22, huneum:22, find:18, ant:10, syn:8, idiom:10, def:8, stroke:2 }
+};
+var EX_SEC_ORDER = ['reading','huneum','find','ant','syn','idiom','def','stroke'];
+var EX_SEC_NAME = {
+  reading:'독음', huneum:'훈음', find:'한자 찾기', ant:'반의어·상대어', syn:'동의어·유의어',
+  idiom:'사자성어 완성', def:'뜻풀이', stroke:'필순'
+};
+var EX_STROKES = ['가로 ㇐','세로 丨','왼쪽 삐침 丿','점 丶'];
+var EX_STROKE_OF = { '가로':'가로 ㇐', '세로':'세로 丨', '왼쪽 삐침':'왼쪽 삐침 丿', '점':'점 丶' };
+
+/* ---------- 급수별 누적 배정한자 풀 ---------- */
+var EX_POOLS = {};
+function exPool(grade){
+  var g = normHanjaGrade(grade), i, j;
+  if(EX_POOLS[g]) return EX_POOLS[g];
+  var out = [], seen = {};
+  for(i = 0; i < HANJA_GRADES.length; i++){
+    var gg = HANJA_GRADES[i];
+    if(gg < g) continue;                      /* 8급은 8급만, 5급은 275자 전부 */
+    var rows = HANJA_BANK[gg] || [];
+    for(j = 0; j < rows.length; j++){
+      if(seen[rows[j].h]) continue;
+      seen[rows[j].h] = 1;
+      out.push({ h:rows[j].h, hun:rows[j].hun, eum:rows[j].eum, word:rows[j].word, wr:rows[j].wr, g:gg });
+    }
+  }
+  EX_POOLS[g] = out;
+  return out;
+}
+
+var EX_CHAR = null;
+function exCharInfo(ch){
+  if(!EX_CHAR){
+    EX_CHAR = {};
+    for(var i = 0; i < HANJA_GRADES.length; i++){
+      var rows = HANJA_BANK[HANJA_GRADES[i]] || [];
+      for(var j = 0; j < rows.length; j++){ if(!EX_CHAR[rows[j].h]) EX_CHAR[rows[j].h] = rows[j]; }
+    }
+  }
+  return EX_CHAR[ch] || null;
+}
+function exHunEum(ch){
+  var e = exCharInfo(ch);
+  return e ? (e.hun + ' ' + e.eum) : '';
+}
+function exEumNote(word){
+  var s = [];
+  for(var i = 0; i < word.length; i++){
+    var e = exCharInfo(word.charAt(i));
+    if(e) s.push(word.charAt(i) + ' ' + e.eum);
+  }
+  return s.length ? '(' + s.join(' · ') + ')' : '';
+}
+function exEsc(s){
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* ---------- 문제 뽑기 도우미 ---------- */
+function exTake(list, keyOf, used){
+  var free = [], i;
+  for(i = 0; i < list.length; i++){ if(!used[keyOf(list[i])]) free.push(list[i]); }
+  if(!free.length){
+    for(var k in used){ if(used.hasOwnProperty(k)) delete used[k]; }
+    free = list.slice();
+  }
+  var item = free[Math.floor(Math.random() * free.length)];
+  used[keyOf(item)] = 1;
+  return item;
+}
+function exChoices(ans, cands, n){
+  var out = [ans], seen = {}, i, c;
+  seen[ans] = 1;
+  for(i = 0; i < cands.length && out.length < n; i++){
+    c = cands[i];
+    if(c === null || c === undefined || c === '') continue;
+    if(seen[c]) continue;
+    seen[c] = 1;
+    out.push(c);
+  }
+  return shuffle(out);
+}
+
+/* ---------- 유형별 문제 만들기 ---------- */
+function exGenReading(pool, used){
+  var e = exTake(pool, function(x){ return 'w:' + x.word; }, used);
+  var ans = e.wr, cands = [], i;
+  if(ans.length > 1){
+    var rev = ans.charAt(1) + ans.charAt(0);
+    if(rev !== ans) cands.push(rev);
+  }
+  var others = shuffle(pool.slice());
+  for(i = 0; i < others.length; i++){
+    var o = others[i];
+    if(o.wr === ans) continue;
+    cands.push(o.wr);
+    if(ans.length > 1 && o.wr.length > 1){
+      cands.push(ans.charAt(0) + o.wr.charAt(1));
+      cands.push(o.wr.charAt(0) + ans.charAt(1));
+    }
+  }
+  var s = EXAM_SENT[e.word] || null;
+  return {
+    sec:'reading', tag:'독음',
+    ask: s ? '밑줄 친 한자어의 독음을 고르세요.' : '다음 한자어의 독음을 고르세요.',
+    sent: s ? [s[0], e.word, s[1]] : null,
+    big: s ? '' : e.word, bigSm: !s, hint: '',
+    choices: exChoices(ans, cands, 4), answer: ans,
+    explain: e.word + ' = ' + ans + ' ' + exEumNote(e.word)
+  };
+}
+
+function exGenHunEum(pool, used){
+  var e = exTake(pool, function(x){ return 'h:' + x.h; }, used);
+  var ans = e.hun + ' ' + e.eum, cands = [];
+  var others = shuffle(pool.slice());
+  for(var i = 0; i < others.length; i++){
+    var o = others[i];
+    if(o.eum === e.eum) continue;             /* 같은 음은 정답이 둘로 보이므로 뺀다 */
+    cands.push(o.hun + ' ' + o.eum);
+  }
+  return {
+    sec:'huneum', tag:'훈음', ask:'다음 한자의 훈과 음을 고르세요.',
+    big: e.h, hint: '', choices: exChoices(ans, cands, 4), answer: ans,
+    explain: e.h + ' = ' + ans
+  };
+}
+
+function exGenFind(pool, used){
+  var e = exTake(pool, function(x){ return 'h:' + x.h; }, used);
+  var ans = e.h, cands = [];
+  var others = shuffle(pool.slice());
+  for(var i = 0; i < others.length; i++){
+    var o = others[i];
+    if(o.h === ans || o.eum === e.eum) continue;
+    cands.push(o.h);
+  }
+  return {
+    sec:'find', tag:'한자 찾기', ask:'다음 훈과 음에 알맞은 한자를 고르세요.',
+    big: e.hun + ' ' + e.eum, bigSm: true, hint: '',
+    choices: exChoices(ans, cands, 4), answer: ans,
+    explain: e.h + ' = ' + e.hun + ' ' + e.eum
+  };
+}
+
+function exGenAnt(pool, ctx, used){
+  var pairs = [], i;
+  for(i = 0; i < EXAM_ANT.length; i++){
+    if(ctx.chars[EXAM_ANT[i][0]] && ctx.chars[EXAM_ANT[i][1]]) pairs.push(EXAM_ANT[i]);
+  }
+  var p = exTake(pairs, function(x){ return x[0] + x[1]; }, used);
+  var flip = Math.random() < 0.5;
+  var a = flip ? p[1] : p[0], b = flip ? p[0] : p[1];
+  var bad = {}; bad[a] = 1; bad[b] = 1;
+  for(i = 0; i < EXAM_ANT.length; i++){
+    if(EXAM_ANT[i][0] === a) bad[EXAM_ANT[i][1]] = 1;
+    if(EXAM_ANT[i][1] === a) bad[EXAM_ANT[i][0]] = 1;
+  }
+  for(i = 0; i < EXAM_SYN.length; i++){
+    if(EXAM_SYN[i][0] === a) bad[EXAM_SYN[i][1]] = 1;
+    if(EXAM_SYN[i][1] === a) bad[EXAM_SYN[i][0]] = 1;
+  }
+  var cands = [], others = shuffle(pool.slice());
+  for(i = 0; i < others.length; i++){ if(!bad[others[i].h]) cands.push(others[i].h); }
+  return {
+    sec:'ant', tag:'반의어·상대어',
+    ask: (p[2] === '상대어') ? '다음 글자와 상대가 되는 한자를 고르세요.' : '다음 글자와 반대가 되는 한자를 고르세요.',
+    big: a + '  ↔  ?', hint: a + ' = ' + exHunEum(a),
+    choices: exChoices(b, cands, 4), answer: b,
+    explain: a + '(' + exHunEum(a) + ') ↔ ' + b + '(' + exHunEum(b) + ') — ' + p[2]
+  };
+}
+
+function exGenSyn(pool, ctx, used){
+  var pairs = [], i;
+  for(i = 0; i < EXAM_SYN.length; i++){
+    if(ctx.chars[EXAM_SYN[i][0]] && ctx.chars[EXAM_SYN[i][1]]) pairs.push(EXAM_SYN[i]);
+  }
+  var p = exTake(pairs, function(x){ return x[0] + x[1]; }, used);
+  var flip = Math.random() < 0.5;
+  var a = flip ? p[1] : p[0], b = flip ? p[0] : p[1];
+  var bad = {}; bad[a] = 1; bad[b] = 1;
+  for(i = 0; i < EXAM_SYN.length; i++){
+    if(EXAM_SYN[i][0] === a) bad[EXAM_SYN[i][1]] = 1;
+    if(EXAM_SYN[i][1] === a) bad[EXAM_SYN[i][0]] = 1;
+  }
+  for(i = 0; i < EXAM_ANT.length; i++){
+    if(EXAM_ANT[i][0] === a) bad[EXAM_ANT[i][1]] = 1;
+    if(EXAM_ANT[i][1] === a) bad[EXAM_ANT[i][0]] = 1;
+  }
+  var be = exCharInfo(b);
+  var cands = [], others = shuffle(pool.slice());
+  for(i = 0; i < others.length; i++){
+    if(bad[others[i].h]) continue;
+    if(be && others[i].eum === be.eum) continue;   /* 같은 음 글자는 헷갈리므로 뺀다 */
+    cands.push(others[i].h);
+  }
+  return {
+    sec:'syn', tag:'동의어·유의어', ask:'다음 글자와 뜻이 비슷한 글자를 고르세요.',
+    big: a + '  =  ?', hint: a + ' = ' + exHunEum(a) + ' · 겹치는 뜻: ' + p[2],
+    choices: exChoices(b, cands, 4), answer: b,
+    explain: a + '(' + exHunEum(a) + ') · ' + b + '(' + exHunEum(b) + ') — 둘 다 ' + p[2]
+  };
+}
+
+function exGenIdiom(pool, ctx, used){
+  var list = [], i;
+  for(i = 0; i < EXAM_IDIOM.length; i++){
+    var it = EXAM_IDIOM[i];
+    if(ctx.chars[it[0].charAt(it[3])]) list.push(it);
+  }
+  var pickIt = exTake(list, function(x){ return x[0] + x[3]; }, used);
+  var w = pickIt[0], bi = pickIt[3], ans = w.charAt(bi);
+  var shown = w.substr(0, bi) + '□' + w.substr(bi + 1);
+  var inIdiom = {};
+  for(i = 0; i < w.length; i++) inIdiom[w.charAt(i)] = 1;
+  var cands = [];
+  var likes = pickIt[4] || [];                 /* 뜻·모양이 가까운 보기 먼저 */
+  for(i = 0; i < likes.length; i++){
+    if(likes[i] !== ans && !inIdiom[likes[i]] && ctx.chars[likes[i]]) cands.push(likes[i]);
+  }
+  var others = shuffle(pool.slice());
+  for(i = 0; i < others.length; i++){
+    if(others[i].h === ans || inIdiom[others[i].h]) continue;
+    cands.push(others[i].h);
+  }
+  return {
+    sec:'idiom', tag:'사자성어 완성', ask:'빈 칸에 들어갈 한자를 고르세요.',
+    big: shown, hint: '뜻 · ' + pickIt[2],
+    choices: exChoices(ans, cands, 4), answer: ans,
+    explain: w + '(' + pickIt[1] + ') — ' + pickIt[2] + ' · ' + ans + ' = ' + exHunEum(ans)
+  };
+}
+
+function exGenDef(pool, used){
+  var list = [], i;
+  for(i = 0; i < pool.length; i++){ if(EXAM_DEF[pool[i].word]) list.push(pool[i]); }
+  var e = exTake(list, function(x){ return 'w:' + x.word; }, used);
+  var ans = e.wr, def = EXAM_DEF[e.word], cands = [];
+  var others = shuffle(list.slice());
+  for(i = 0; i < others.length; i++){
+    if(others[i].wr === ans) continue;
+    cands.push(others[i].wr);
+  }
+  return {
+    sec:'def', tag:'뜻풀이', ask:'다음 뜻에 알맞은 한자어를 고르세요.',
+    note: def, big: '', hint: '',
+    choices: exChoices(ans, cands, 4), answer: ans,
+    explain: e.word + ' = ' + ans + ' — ' + def
+  };
+}
+
+function exGenStroke(pool, used){
+  var list = [], i;
+  for(i = 0; i < pool.length; i++){ if(EXAM_STROKE[pool[i].h]) list.push(pool[i]); }
+  var e = exTake(list, function(x){ return 'h:' + x.h; }, used);
+  var info = EXAM_STROKE[e.h], n = info[0], first = info[1];
+  if(Math.random() < 0.5){
+    var nums = [n - 2, n - 1, n + 1, n + 2, n + 3], cands = [];
+    for(i = 0; i < nums.length; i++){ if(nums[i] > 0 && nums[i] !== n) cands.push(String(nums[i])); }
+    return {
+      sec:'stroke', tag:'필순', ask:'다음 한자의 총 획수는?', big: e.h, hint: '',
+      choices: exChoices(String(n), cands, 4), answer: String(n),
+      explain: e.h + ' = 모두 ' + n + '획 · 첫 획은 ' + first
+    };
+  }
+  var ansLabel = EX_STROKE_OF[first] || EX_STROKES[0], cands2 = [];
+  for(i = 0; i < EX_STROKES.length; i++){ if(EX_STROKES[i] !== ansLabel) cands2.push(EX_STROKES[i]); }
+  return {
+    sec:'stroke', tag:'필순', ask:'다음 한자의 첫 번째 획은?', big: e.h, hint: '',
+    choices: exChoices(ansLabel, cands2, 4), answer: ansLabel,
+    explain: e.h + ' = 모두 ' + n + '획 · 첫 획은 ' + first
+  };
+}
+
+/* ---------- 한 부의 시험지 만들기 ---------- */
+function exPlan(grade, len){
+  var g = normHanjaGrade(grade), spec = EX_SPEC[g], out = [], i, j, k;
+  var counts = {};
+  if(len === 'mini'){
+    var total = EX_MIN_N, sum = 0, keys = [], raw = {}, usedN = 0;
+    for(i = 0; i < EX_SEC_ORDER.length; i++){
+      k = EX_SEC_ORDER[i];
+      if(spec[k]){ keys.push(k); sum += spec[k]; }
+    }
+    for(i = 0; i < keys.length; i++){
+      raw[keys[i]] = spec[keys[i]] * total / sum;
+      counts[keys[i]] = Math.floor(raw[keys[i]]);
+      usedN += counts[keys[i]];
+    }
+    var rest = total - usedN;
+    var byFrac = keys.slice().sort(function(a, b){
+      return (raw[b] - Math.floor(raw[b])) - (raw[a] - Math.floor(raw[a]));
+    });
+    for(i = 0; i < rest; i++) counts[byFrac[i % byFrac.length]]++;
+  } else {
+    for(i = 0; i < EX_SEC_ORDER.length; i++){
+      k = EX_SEC_ORDER[i];
+      counts[k] = spec[k] || 0;
+    }
+  }
+  for(i = 0; i < EX_SEC_ORDER.length; i++){
+    k = EX_SEC_ORDER[i];
+    for(j = 0; j < (counts[k] || 0); j++) out.push(k);
+  }
+  return out;
+}
+
+function exBuild(grade, len){
+  var g = normHanjaGrade(grade), i;
+  var lenKind = (len === 'full') ? 'full' : 'mini';
+  var pool = exPool(g), chars = {};
+  for(i = 0; i < pool.length; i++) chars[pool[i].h] = 1;
+  var ctx = { chars: chars, grade: g, pool: pool };
+  var plan = exPlan(g, lenKind);
+  var used = {}, qs = [];
+  for(i = 0; i < plan.length; i++){
+    var sec = plan[i];
+    if(!used[sec]) used[sec] = {};
+    var q;
+    if(sec === 'reading') q = exGenReading(pool, used[sec]);
+    else if(sec === 'huneum') q = exGenHunEum(pool, used[sec]);
+    else if(sec === 'find') q = exGenFind(pool, used[sec]);
+    else if(sec === 'ant') q = exGenAnt(pool, ctx, used[sec]);
+    else if(sec === 'syn') q = exGenSyn(pool, ctx, used[sec]);
+    else if(sec === 'idiom') q = exGenIdiom(pool, ctx, used[sec]);
+    else if(sec === 'def') q = exGenDef(pool, used[sec]);
+    else q = exGenStroke(pool, used[sec]);
+    q.no = qs.length + 1;
+    qs.push(q);
+  }
+  var total = qs.length;
+  return {
+    grade: g, len: lenKind, qs: qs, total: total,
+    cut: (lenKind === 'mini') ? EX_MINI_CUT : EX_META[g].cut,
+    timeMin: (lenKind === 'mini') ? EX_MINI_MIN : EX_FULL_MIN
+  };
+}
+
+/* ---------- 시험 진행 상태 ---------- */
+var EX_GRADE_KEY = 'gm_exam_grade';
+var EX_LEN_KEY = 'gm_exam_len';
+var EX = {
+  grade: 8, len: 'mini', qs: [], ans: [], idx: 0, cut: 0, timeMin: 0,
+  deadline: 0, startedAt: 0, timer: null, running: false, lastResult: null
+};
+
+var elExam = $('screenExam'), elExamRes = $('screenExamResult'), elExamSetup = $('examSetup');
+var elExTag = $('exTag'), elExAsk = $('exAsk'), elExNote = $('exNote'), elExSent = $('exSent');
+var elExBig = $('exBig'), elExHint = $('exHint'), elExOpts = $('exOpts'), elExOmr = $('exOmr');
+var elExSheet = $('exSheet'), elExCount = $('exCount'), elExBar = $('exBar'), elExLeft = $('exLeft');
+var elExTimer = $('exTimer'), elExName = $('exName'), elExPrev = $('exPrev'), elExNext = $('exNext');
+var elExDlg = $('exDlg');
+
+function exBest(grade){ return Store.get('gm_exam_best_g' + normHanjaGrade(grade), 0) || 0; }
+function exBestAll(){
+  var m = 0;
+  for(var i = 0; i < EX_ORDER.length; i++){
+    var v = exBest(EX_ORDER[i]);
+    if(v > m) m = v;
+  }
+  return m;
+}
+
+/* 시작 화면의 모의고사 카드 배지 + 설정 창의 급수별 최고 점수 */
+function exTitleBadge(){
+  var v = exBest(EX.grade), el = $('exBest');
+  if(el) el.textContent = (v > 0) ? (EX.grade + '급 최고 ' + v + '점') : (EX.grade + '급 첫 도전');
+  var labs = document.querySelectorAll('[data-exbest]');
+  for(var i = 0; i < labs.length; i++){
+    var g = parseInt(labs[i].getAttribute('data-exbest'), 10);
+    var bv = exBest(g);
+    labs[i].textContent = (bv > 0) ? ('최고 ' + bv + '점') : '첫 도전';
+  }
+}
+
+function exSyncSetup(){
+  var gbtns = document.querySelectorAll('.es-g');
+  for(var i = 0; i < gbtns.length; i++){
+    var g = parseInt(gbtns[i].getAttribute('data-g'), 10);
+    if(g === EX.grade) gbtns[i].classList.add('on'); else gbtns[i].classList.remove('on');
+  }
+  var lbtns = document.querySelectorAll('.es-l');
+  for(i = 0; i < lbtns.length; i++){
+    if(lbtns[i].getAttribute('data-len') === EX.len) lbtns[i].classList.add('on');
+    else lbtns[i].classList.remove('on');
+  }
+  var fullEl = document.querySelector('.es-l[data-len="full"] b');
+  if(fullEl) fullEl.textContent = '실전 ' + EX_META[EX.grade].full + '문항';
+  var n = (EX.len === 'mini') ? EX_MIN_N : EX_META[EX.grade].full;
+  var min = (EX.len === 'mini') ? EX_MINI_MIN : EX_FULL_MIN;
+  var cut = (EX.len === 'mini') ? EX_MINI_CUT : EX_META[EX.grade].cut;
+  var info = $('esInfo');
+  if(info){
+    info.textContent = EX.grade + '급 · ' + n + '문항 · ' + min + '분 · 합격 ' + cut + '문항(70%)';
+  }
+  exTitleBadge();
+}
+
+function exSetGrade(g, silent){
+  EX.grade = normHanjaGrade(g);
+  Store.set(EX_GRADE_KEY, EX.grade);
+  exSyncSetup();
+  if(!silent) Sfx.tap();
+}
+function exSetLen(l, silent){
+  EX.len = (l === 'full') ? 'full' : 'mini';
+  Store.set(EX_LEN_KEY, EX.len);
+  exSyncSetup();
+  if(!silent) Sfx.tap();
+}
+function exOpenSetup(){
+  exSyncSetup();
+  if(elExamSetup) elExamSetup.hidden = false;
+  Sfx.tap();
+}
+function exCloseSetup(){
+  if(elExamSetup) elExamSetup.hidden = true;
+}
+
+/* ---------- 화면 그리기 ---------- */
+function exRender(){
+  var q = EX.qs[EX.idx];
+  if(!q) return;
+  elExTag.textContent = '[' + q.tag + ']';
+  elExAsk.textContent = q.ask;
+  if(q.note){ elExNote.hidden = false; elExNote.textContent = q.note; }
+  else { elExNote.hidden = true; elExNote.textContent = ''; }
+  if(q.sent){
+    elExSent.hidden = false;
+    elExSent.innerHTML = exEsc(q.sent[0]) + '<em>' + exEsc(q.sent[1]) + '</em>' + exEsc(q.sent[2]);
+  } else {
+    elExSent.hidden = true;
+    elExSent.innerHTML = '';
+  }
+  if(q.big){
+    elExBig.hidden = false;
+    elExBig.textContent = q.big;
+    elExBig.className = 'ex-big' + (q.bigSm ? ' sm' : '');
+  } else {
+    elExBig.hidden = true;
+    elExBig.textContent = '';
+  }
+  if(q.hint){ elExHint.hidden = false; elExHint.textContent = q.hint; }
+  else { elExHint.hidden = true; elExHint.textContent = ''; }
+
+  elExOpts.innerHTML = '';
+  var marks = ['①','②','③','④'];
+  for(var i = 0; i < q.choices.length; i++){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ex-opt' + (EX.ans[EX.idx] === i ? ' sel' : '');
+    b.setAttribute('data-c', String(i));
+    var n = document.createElement('span');
+    n.className = 'n';
+    n.textContent = marks[i] || String(i + 1);
+    var tx = document.createElement('span');
+    tx.className = 'tx';
+    tx.textContent = q.choices[i];
+    b.appendChild(n); b.appendChild(tx);
+    b.addEventListener('pointerdown', (function(k){
+      return function(ev){ ev.preventDefault(); exPick(k); };
+    })(i));
+    elExOpts.appendChild(b);
+  }
+  elExPrev.disabled = (EX.idx === 0);
+  elExNext.textContent = (EX.idx === EX.qs.length - 1) ? '답안 제출 ✓' : '다음 ▶';
+  if(elExSheet) elExSheet.scrollTop = 0;
+  exUpdateMeta();
+}
+
+function exPick(k){
+  if(!EX.running) return;
+  var q = EX.qs[EX.idx];
+  if(!q || k < 0 || k >= q.choices.length) return;
+  EX.ans[EX.idx] = k;
+  Sfx.tap();
+  var btns = elExOpts.querySelectorAll('.ex-opt');
+  for(var i = 0; i < btns.length; i++){
+    if(i === k) btns[i].classList.add('sel'); else btns[i].classList.remove('sel');
+  }
+  exUpdateMeta();
+}
+
+function exUpdateMeta(){
+  var total = EX.qs.length, done = 0, i;
+  for(i = 0; i < EX.ans.length; i++){ if(EX.ans[i] >= 0) done++; }
+  if(elExCount) elExCount.textContent = (EX.idx + 1) + ' / ' + total;
+  if(elExLeft) elExLeft.textContent = '안 푼 ' + (total - done);
+  if(elExBar) elExBar.style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+  exSyncOmr();
+}
+
+function exSyncOmr(){
+  var ns = elExOmr.children, i;
+  for(i = 0; i < ns.length; i++){
+    var cls = 'omr-n';
+    if(EX.ans[i] >= 0) cls += ' done';
+    if(i === EX.idx) cls += ' cur';
+    ns[i].className = cls;
+  }
+  var cur = ns[EX.idx];
+  if(cur){
+    var left = cur.offsetLeft - elExOmr.clientWidth / 2 + cur.offsetWidth / 2;
+    elExOmr.scrollLeft = Math.max(0, left);
+  }
+}
+
+function exGoto(i){
+  if(i < 0 || i >= EX.qs.length) return;
+  EX.idx = i;
+  exRender();
+}
+
+/* ---------- 타이머 ---------- */
+function exFmt(sec){
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+function exStopTimer(){
+  if(EX.timer){ clearInterval(EX.timer); EX.timer = null; }
+}
+function exTick(){
+  if(!EX.running){ exStopTimer(); return; }
+  var left = Math.max(0, Math.round((EX.deadline - Date.now()) / 1000));
+  if(elExTimer){
+    elExTimer.textContent = exFmt(left);
+    if(left <= 300) elExTimer.classList.add('warn');
+    else elExTimer.classList.remove('warn');
+  }
+  if(left <= 0) exFinish('time');
+}
+function exStartTimer(){
+  exStopTimer();
+  EX.timer = setInterval(exTick, 250);
+  exTick();
+}
+
+/* ---------- 시작 · 제출 · 결과 ---------- */
+function exStart(grade, len){
+  Sfx.unlock();
+  var built = exBuild(grade, len), i;
+  EX.grade = built.grade;
+  EX.len = built.len;
+  EX.qs = built.qs;
+  EX.cut = built.cut;
+  EX.timeMin = built.timeMin;
+  EX.idx = 0;
+  EX.ans = [];
+  for(i = 0; i < EX.qs.length; i++) EX.ans.push(-1);
+  EX.running = true;
+  EX.startedAt = Date.now();
+  EX.deadline = EX.startedAt + built.timeMin * 60000;
+
+  elTitle.hidden = true;
+  elGame.hidden = true;
+  elExamRes.hidden = true;
+  elExam.hidden = false;
+  if(elExamSetup) elExamSetup.hidden = true;
+  if(elExDlg) elExDlg.hidden = true;
+  if(elExName) elExName.textContent = '📝 ' + EX.grade + '급 모의고사';
+  if(elExTimer){ elExTimer.textContent = exFmt(built.timeMin * 60); elExTimer.classList.remove('warn'); }
+
+  elExOmr.innerHTML = '';
+  for(i = 0; i < EX.qs.length; i++){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'omr-n';
+    b.textContent = String(i + 1);
+    b.setAttribute('data-i', String(i));
+    b.addEventListener('pointerdown', (function(k){
+      return function(ev){ ev.preventDefault(); exGoto(k); };
+    })(i));
+    elExOmr.appendChild(b);
+  }
+  exRender();
+  exStartTimer();
+}
+
+function exDlgOpen(title, desc, okText, cancelText, onOk){
+  $('exDlgT').textContent = title;
+  $('exDlgD').textContent = desc;
+  $('exDlgYes').textContent = okText;
+  $('exDlgNo').textContent = cancelText;
+  exDlgOpen.cb = onOk;
+  elExDlg.hidden = false;
+}
+function exDlgClose(){
+  elExDlg.hidden = true;
+  exDlgOpen.cb = null;
+}
+function exAskSubmit(){
+  if(!EX.running) return;
+  var total = EX.qs.length, done = 0, i;
+  for(i = 0; i < EX.ans.length; i++){ if(EX.ans[i] >= 0) done++; }
+  var miss = total - done;
+  exDlgOpen(
+    miss ? '답안을 낼까요?' : '답안을 낼까요?',
+    miss ? ('안 푼 문제가 ' + miss + '개 있어요. 지금 내면 그 문제는 틀린 것으로 계산돼요.')
+         : ('모두 ' + total + '문항을 풀었어요. 이대로 채점할까요?'),
+    '제출하기', '계속 풀기',
+    function(){ exFinish('user'); }
+  );
+  Sfx.tap();
+}
+function exAskQuit(){
+  if(!EX.running){ exExit(); return; }
+  exDlgOpen('그만할까요?', '지금 나가면 이번 답안은 저장되지 않아요.', '그만하기', '계속 풀기', function(){ exExit(); });
+  Sfx.tap();
+}
+function exExit(){
+  EX.running = false;
+  exStopTimer();
+  if(elExDlg) elExDlg.hidden = true;
+  elExam.hidden = true;
+  elExamRes.hidden = true;
+  elTitle.hidden = false;
+  exTitleBadge();
+  refreshTitleBests();
+  soundIcon();
+}
+
+function exFinish(reason){
+  if(!EX.qs.length) return;
+  EX.running = false;
+  exStopTimer();
+  if(elExDlg) elExDlg.hidden = true;
+  var total = EX.qs.length, correct = 0, i, q;
+  var stat = {}, order = [];
+  for(i = 0; i < total; i++){
+    q = EX.qs[i];
+    if(!stat[q.sec]){ stat[q.sec] = { n:0, c:0, name:q.tag }; order.push(q.sec); }
+    stat[q.sec].n++;
+    if(EX.ans[i] >= 0 && q.choices[EX.ans[i]] === q.answer){
+      correct++;
+      stat[q.sec].c++;
+    }
+  }
+  var pct = Math.round(correct / total * 100);
+  var key = 'gm_exam_best_g' + EX.grade;
+  var prev = Store.get(key, 0) || 0;
+  EX.lastResult = {
+    grade: EX.grade, len: EX.len, total: total, correct: correct, pct: pct,
+    pass: (correct >= EX.cut), cut: EX.cut, stat: stat, order: order, reason: reason,
+    isBest: (pct > prev), prevBest: prev,
+    usedMs: Math.min(EX.timeMin * 60000, Math.max(0, Date.now() - EX.startedAt))
+  };
+  if(pct > prev) Store.set(key, pct);
+  exRenderResult();
+  elExam.hidden = true;
+  elExamRes.hidden = false;
+  exTitleBadge();
+  refreshTitleBests();
+  if(EX.lastResult.pass) Sfx.victory(); else Sfx.gameOver();
+}
+
+function exRenderResult(){
+  var r = EX.lastResult;
+  if(!r) return;
+  var badge = $('rvBadge');
+  if(r.pct === 100){ badge.textContent = '만점 합격 🏆'; badge.className = 'ex-badge'; }
+  else if(r.pass){ badge.textContent = '합격'; badge.className = 'ex-badge'; }
+  else { badge.textContent = '불합격'; badge.className = 'ex-badge fail'; }
+  var sc = $('rvScore');
+  sc.innerHTML = '';
+  sc.appendChild(document.createTextNode(String(r.pct) + '점 '));
+  var sp = document.createElement('span');
+  sp.textContent = r.correct + ' / ' + r.total;
+  sc.appendChild(sp);
+
+  var call = (heroName ? heroName + ' 용사, ' : '') + r.grade + '급 모의고사 ' + (r.pass ? '합격!' : '아쉬워요 — 다시 도전!');
+  $('rvCall').textContent = call;
+  var usedMin = Math.max(1, Math.round(r.usedMs / 60000));
+  var sub = '합격 기준 ' + r.cut + '문항 (70%) · ' + (r.reason === 'time' ? '시간 종료' : usedMin + '분 사용');
+  if(r.isBest && r.pct > 0) sub += ' · 최고 기록!';
+  $('rvSub').textContent = sub;
+
+  var bars = $('rvBars');
+  bars.innerHTML = '';
+  for(var i = 0; i < r.order.length; i++){
+    var s = r.stat[r.order[i]];
+    var p = s.n ? s.c / s.n : 0;
+    var row = document.createElement('div');
+    row.className = 'ex-bar-row';
+    var lb = document.createElement('span'); lb.className = 'lb'; lb.textContent = s.name;
+    var tr = document.createElement('span'); tr.className = 'tr';
+    var fill = document.createElement('i');
+    fill.style.width = Math.round(p * 100) + '%';
+    if(p < 0.7) fill.className = 'low';
+    tr.appendChild(fill);
+    var vv = document.createElement('span'); vv.className = 'vv'; vv.textContent = s.c + '/' + s.n;
+    row.appendChild(lb); row.appendChild(tr); row.appendChild(vv);
+    bars.appendChild(row);
+  }
+
+  var notes = $('rvNotes'), wrong = [], j;
+  for(j = 0; j < EX.qs.length; j++){
+    var q = EX.qs[j], picked = EX.ans[j];
+    if(picked >= 0 && q.choices[picked] === q.answer) continue;
+    wrong.push({ no: j + 1, q: q, picked: (picked >= 0 ? q.choices[picked] : null) });
+  }
+  notes.innerHTML = '';
+  $('rvNoteCount').textContent = wrong.length + '문항';
+  if(!wrong.length){
+    var ok = document.createElement('div');
+    ok.className = 'ex-empty';
+    ok.textContent = '틀린 문제가 없어요! 🎉 스스로 아주 잘했어요.';
+    notes.appendChild(ok);
+    return;
+  }
+  for(j = 0; j < wrong.length; j++) notes.appendChild(exNoteCard(wrong[j]));
+  if($('rvScroll')) $('rvScroll').scrollTop = 0;
+}
+
+function exQuestionLine(q){
+  if(q.sent) return exEsc(q.sent[0]) + '<em>' + exEsc(q.sent[1]) + '</em>' + exEsc(q.sent[2]);
+  if(q.note) return exEsc(q.note);
+  if(q.big) return exEsc(q.big) + (q.hint ? ' <span style="color:#8a86b8">(' + exEsc(q.hint) + ')</span>' : '');
+  return exEsc(q.ask);
+}
+function exNoteCard(w){
+  var q = w.q;
+  var card = document.createElement('div');
+  card.className = 'nt';
+  var h = document.createElement('div');
+  h.className = 'nt-h';
+  var nb = document.createElement('b'); nb.textContent = String(w.no);
+  var tg = document.createElement('span'); tg.className = 'tg'; tg.textContent = '[' + q.tag + ']';
+  h.appendChild(nb); h.appendChild(tg);
+  card.appendChild(h);
+
+  var qd = document.createElement('div');
+  qd.className = 'nt-q';
+  qd.innerHTML = exQuestionLine(q);
+  card.appendChild(qd);
+
+  var a1 = document.createElement('div');
+  a1.className = 'nt-a';
+  var k1 = document.createElement('span'); k1.className = 'k'; k1.textContent = '내 답';
+  var v1 = document.createElement('span'); v1.className = 'bad';
+  v1.textContent = (w.picked === null) ? '안 풀었음' : w.picked;
+  a1.appendChild(k1); a1.appendChild(v1);
+  card.appendChild(a1);
+
+  var a2 = document.createElement('div');
+  a2.className = 'nt-a';
+  var k2 = document.createElement('span'); k2.className = 'k'; k2.textContent = '정답';
+  var v2 = document.createElement('span'); v2.className = 'good'; v2.textContent = q.answer;
+  a2.appendChild(k2); a2.appendChild(v2);
+  card.appendChild(a2);
+
+  var ex = document.createElement('div');
+  ex.className = 'nt-e';
+  ex.textContent = '풀이 · ' + q.explain;
+  card.appendChild(ex);
+  return card;
+}
+
+/* 검증용 훅 — ?test=1 로 열었을 때만 시험지를 밖에 내어준다 */
+try{
+  if(/[?&]test=1/.test(location.search)){
+    window.__gmExam = {
+      build: function(g, len){ return exBuild(g, len); },
+      start: function(g, len){ exStart(g, len); },
+      state: EX,
+      goto: function(i){ exGoto(i); },
+      pick: function(k){ exPick(k); },
+      openSetup: function(){ exOpenSetup(); },
+      closeSetup: function(){ exCloseSetup(); },
+      finish: function(r){ exFinish(r || 'user'); },
+      submit: function(){ exAskSubmit(); },
+      answerAll: function(wrongEvery){
+        var w = wrongEvery || 0, i;
+        for(i = 0; i < EX.qs.length; i++){
+          var q = EX.qs[i], ci = q.choices.indexOf(q.answer);
+          if(ci < 0) ci = 0;
+          if(w && (i % w) === 0) ci = (ci + 1) % q.choices.length;
+          EX.ans[i] = ci;
+        }
+        exRender();
+        exUpdateMeta();
+      },
+      poolSize: function(g){ return exPool(g).length; },
+      plan: function(g, len){ return exPlan(g, len); },
+      meta: EX_META, spec: EX_SPEC, names: EX_SEC_NAME
+    };
+  }
+}catch(e){}
+
+/* ---------- 모의고사 화면 연결 ---------- */
+(function exWire(){
+  var card = document.querySelector('.mode-card[data-mode="exam"]');
+  if(card){
+    card.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      Sfx.unlock();
+      exOpenSetup();
+    });
+  }
+  var gs = document.querySelectorAll('.es-g');
+  for(var i = 0; i < gs.length; i++){
+    (function(btn){
+      btn.addEventListener('pointerdown', function(ev){
+        ev.preventDefault();
+        Sfx.unlock();
+        exSetGrade(btn.getAttribute('data-g'));
+      });
+    })(gs[i]);
+  }
+  var ls = document.querySelectorAll('.es-l');
+  for(i = 0; i < ls.length; i++){
+    (function(btn){
+      btn.addEventListener('pointerdown', function(ev){
+        ev.preventDefault();
+        Sfx.unlock();
+        exSetLen(btn.getAttribute('data-len'));
+      });
+    })(ls[i]);
+  }
+  var go = $('esGo');
+  if(go) go.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    Sfx.unlock();
+    exCloseSetup();
+    exStart(EX.grade, EX.len);
+  });
+  var close = $('esClose');
+  if(close) close.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    Sfx.tap();
+    exCloseSetup();
+  });
+  if(elExamSetup) elExamSetup.addEventListener('pointerdown', function(ev){
+    if(ev.target === elExamSetup) exCloseSetup();
+  });
+
+  if($('exQuit')) $('exQuit').addEventListener('pointerdown', function(ev){ ev.preventDefault(); exAskQuit(); });
+  if($('exSubmitTop')) $('exSubmitTop').addEventListener('pointerdown', function(ev){ ev.preventDefault(); exAskSubmit(); });
+  if(elExPrev) elExPrev.addEventListener('pointerdown', function(ev){ ev.preventDefault(); exGoto(EX.idx - 1); });
+  if(elExNext) elExNext.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    if(EX.idx >= EX.qs.length - 1) exAskSubmit();
+    else exGoto(EX.idx + 1);
+  });
+  if($('exDlgYes')) $('exDlgYes').addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    var cb = exDlgOpen.cb;
+    exDlgClose();
+    if(cb) cb();
+  });
+  if($('exDlgNo')) $('exDlgNo').addEventListener('pointerdown', function(ev){ ev.preventDefault(); exDlgClose(); });
+
+  if($('rvRetry')) $('rvRetry').addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    exStart(EX.grade, EX.len);
+  });
+  if($('rvNew')) $('rvNew').addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    elExamRes.hidden = true;
+    elTitle.hidden = false;
+    exOpenSetup();
+  });
+  if($('rvHome')) $('rvHome').addEventListener('pointerdown', function(ev){ ev.preventDefault(); toTitle(); });
+
+  document.addEventListener('keydown', function(ev){
+    if(elExam.hidden || !EX.running) return;
+    if(ev.key === 'Escape'){ ev.preventDefault(); exAskQuit(); }
+    if(ev.key === 'ArrowLeft'){ ev.preventDefault(); exGoto(EX.idx - 1); }
+    if(ev.key === 'ArrowRight'){ ev.preventDefault(); exGoto(EX.idx + 1); }
+    if(ev.key === '1' || ev.key === '2' || ev.key === '3' || ev.key === '4'){
+      ev.preventDefault();
+      exPick(parseInt(ev.key, 10) - 1);
+    }
+  });
+
+  /* 설정 값 복원 */
+  exSetGrade(Store.get(EX_GRADE_KEY, 8), true);
+  exSetLen(Store.get(EX_LEN_KEY, 'mini'), true);
+})();
+
+/* =========================================================
    start wiring
    ========================================================= */
 var gradeBtns = document.querySelectorAll('.g-btn');
@@ -3660,7 +4855,9 @@ for(var gi=0;gi<gradeBtns.length;gi++){
 var modeCards = document.querySelectorAll('.mode-card');
 for(var i=0;i<modeCards.length;i++){
   (function(card){
-    if(card.getAttribute('data-mode') === 'hanja') return;   /* 한자 카드는 급수 선택을 거친다 */
+    var _m = card.getAttribute('data-mode');
+    if(_m === 'hanja') return;      /* 한자 카드는 급수 선택을 거친다 */
+    if(_m === 'exam') return;       /* 모의고사 카드는 시험 설정 창을 거친다 */
     card.addEventListener('pointerdown', function(ev){
       ev.preventDefault();
       Sfx.unlock();
