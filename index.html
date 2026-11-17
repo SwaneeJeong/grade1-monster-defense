@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#bfe9ff">
-<title>수학·낱말 디펜스</title>
+<title>수학·낱말·한자 디펜스</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;}
 *[hidden]{display:none!important;}
@@ -28,7 +28,7 @@ body{
 .deco{position:absolute;font-size:clamp(18px,6vw,30px);opacity:.8;animation:floaty 5s ease-in-out infinite;pointer-events:none;}
 .title-wrap{display:flex;flex-direction:column;gap:clamp(7px,1.8vh,13px);width:100%;max-width:560px;}
 .logo{text-align:center;font-weight:900;color:#12324e;line-height:1.1;
-  font-size:clamp(25px,8.4vw,44px);text-shadow:0 3px 0 #fff,0 8px 16px rgba(60,120,200,.22);}
+  font-size:clamp(21px,7vw,40px);text-shadow:0 3px 0 #fff,0 8px 16px rgba(60,120,200,.22);}
 .logo .sub{display:block;margin-top:6px;font-size:clamp(11px,3.4vw,15px);font-weight:800;color:#3b6ea8;letter-spacing:.5px;}
 .mode-card{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:18px;padding:11px 14px;
   font-family:inherit;font-size:clamp(15px,4.6vw,21px);font-weight:900;color:#fff;text-align:left;cursor:pointer;
@@ -41,6 +41,20 @@ body{
 .m-math{background:linear-gradient(135deg,#4facfe,#2f7ff0);}
 .m-word{background:linear-gradient(135deg,#ffa05a,#f4622f);}
 .m-mix{background:linear-gradient(135deg,#a473ff,#6c3ef0);}
+.m-hanja{background:linear-gradient(135deg,#43cf8f,#13925f);}
+.mode-card.on{box-shadow:0 0 0 3px #ffd400,0 5px 0 rgba(0,0,0,.16),0 10px 22px rgba(30,80,140,.24);}
+
+/* ---------- 한자 급수 칩 (8급 / 7급 / 6급 / 5급) ---------- */
+.hz-row{display:flex;align-items:center;gap:4px;width:100%;}
+.hz-btn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:2px solid #cfe3f8;background:#fff;color:#2a5b96;border-radius:12px;padding:4px 0;
+  font-family:inherit;line-height:1.05;cursor:pointer;box-shadow:0 3px 0 #dbe9f8;
+  transition:background .15s,box-shadow .07s,transform .07s,color .15s;}
+.hz-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe9f8;}
+.hz-btn b{font-size:clamp(13px,3.8vw,17px);font-weight:900;}
+.hz-btn small{font-size:clamp(8px,2.5vw,10px);font-weight:800;opacity:.78;margin-top:1px;white-space:nowrap;}
+.hz-btn.on{color:#fff;border-color:#13925f;background:linear-gradient(135deg,#43cf8f,#13925f);
+  box-shadow:0 3px 0 #0c744a,0 0 12px rgba(60,200,140,.45);}
 .title-foot{display:flex;align-items:center;justify-content:center;gap:8px;font-size:clamp(11px,3.4vw,14px);font-weight:800;color:#54759b;}
 .title-foot .best-all{background:#fff;border:2px solid #d3e6fa;border-radius:99px;padding:4px 10px;}
 
@@ -327,6 +341,20 @@ body{
 .pad .k.fire:active{box-shadow:0 0 0 #d98200;}
 
 .whead{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;min-height:clamp(30px,5.4vh,46px);}
+
+/* ---------- 한자 판 — 글자를 크게, 묻는 말은 옆에 ---------- */
+.hhead{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;min-height:clamp(34px,6vh,50px);}
+.hbig{font-weight:900;color:#12324e;line-height:1.05;letter-spacing:2px;white-space:nowrap;
+  font-size:clamp(32px,10vw,48px);
+  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,-apple-system,sans-serif;}
+.hbig.ko{font-size:clamp(18px,5.2vw,25px);letter-spacing:1px;}
+.hbig.word{font-size:clamp(26px,8vw,40px);letter-spacing:5px;}
+.haside{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-width:0;}
+.hq{font-weight:900;color:#12324e;font-size:clamp(12px,3.6vw,16px);line-height:1.2;white-space:nowrap;}
+.hhint{font-weight:800;color:#6f8aa6;font-size:clamp(9px,2.8vw,12px);margin-top:1px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.ch.hch{font-size:clamp(16px,4.8vw,23px);}
+.ch.hch.glyph{font-size:clamp(21px,6.2vw,31px);letter-spacing:3px;}
 .wemoji{font-size:clamp(24px,7.4vw,38px);line-height:1;}
 .wqwrap{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;}
 .wq{font-weight:900;color:#12324e;letter-spacing:2px;font-size:clamp(23px,7.6vw,38px);line-height:1.1;white-space:nowrap;}
@@ -440,7 +468,7 @@ body{
     <span class="deco" style="left:14%;bottom:12%;animation-delay:1.4s">🎈</span>
     <span class="deco" style="right:12%;bottom:16%;animation-delay:.4s">🍭</span>
     <div class="title-wrap">
-      <div class="logo">👾 수학·낱말 디펜스
+      <div class="logo">👾 수학·낱말·한자 디펜스
         <span class="sub">몬스터가 오기 전에 문제를 풀어 물리쳐라!</span>
       </div>
 
@@ -498,6 +526,23 @@ body{
         </span>
         <span class="mc-best" data-best="mix">최고 0점</span>
       </button>
+
+      <button class="mode-card m-hanja" data-mode="hanja" type="button"
+              aria-expanded="false" aria-controls="hanjaRow">
+        <span class="mc-emoji">🀄</span>
+        <span class="mc-txt">한자 급수 도전
+          <span class="mc-sub" id="subHanja">한국어문회 8급부터 5급까지</span>
+        </span>
+        <span class="mc-best" data-best="hanja">8급 최고 0점</span>
+      </button>
+
+      <div class="hz-row" id="hanjaRow" role="group" aria-label="한자 급수 선택" hidden>
+        <span class="grade-cap">급수</span>
+        <button class="hz-btn on" type="button" data-hz="8"><b>8급</b><small>입문 50자</small></button>
+        <button class="hz-btn" type="button" data-hz="7"><b>7급</b><small>초급 50자</small></button>
+        <button class="hz-btn" type="button" data-hz="6"><b>6급</b><small>중급 75자</small></button>
+        <button class="hz-btn" type="button" data-hz="5"><b>5급</b><small>심화 100자</small></button>
+      </div>
 
       <div class="hero-set">
         <input class="hero-file" id="heroPhotoInput" type="file" accept="image/*" aria-label="주인공 사진 고르기">
@@ -634,6 +679,22 @@ body{
           <button class="ch" data-i="1" type="button"><i>2</i><span></span></button>
           <button class="ch" data-i="2" type="button"><i>3</i><span></span></button>
           <button class="ch" data-i="3" type="button"><i>4</i><span></span></button>
+        </div>
+      </div>
+
+      <div id="panelHanja" hidden>
+        <div class="hhead">
+          <div class="hbig" id="hBig">國</div>
+          <div class="haside">
+            <div class="hq" id="hQ">음(소리)은?</div>
+            <div class="hhint" id="hHint">소리 내어 읽어 보세요</div>
+          </div>
+        </div>
+        <div class="choices" id="hChoices">
+          <button class="ch hch" data-hi="0" type="button"><i>1</i><span></span></button>
+          <button class="ch hch" data-hi="1" type="button"><i>2</i><span></span></button>
+          <button class="ch hch" data-hi="2" type="button"><i>3</i><span></span></button>
+          <button class="ch hch" data-hi="3" type="button"><i>4</i><span></span></button>
         </div>
       </div>
     </div>
@@ -891,6 +952,461 @@ var SYL = ['가','나','다','라','마','바','사','아','자','차','카','�
            '개','내','대','래','매','배','새','애','재','채','커','터','퍼','허'];
 
 var recentWords = [];
+
+/* =========================================================
+   hanja bank — 한국어문회 한자능력검정시험 급수별 '신습한자'
+   8급 50자 · 7급 50자 · 6급 75자 · 5급 100자
+   항목: [한자, 훈, 음, 그 글자가 들어간 한자어, 한자어 읽기]
+   훈·음은 한국어문회 「전체배정한자」 대표훈음 기준
+   ========================================================= */
+var HANJA_GRADES = [8, 7, 6, 5];
+var HANJA_META = {
+  8: { level:'입문' },
+  7: { level:'초급' },
+  6: { level:'중급' },
+  5: { level:'심화' }
+};
+var HANJA_RAW = {
+  8: [
+    ['校','학교','교','校門','교문'],
+    ['敎','가르칠','교','敎室','교실'],
+    ['九','아홉','구','九月','구월'],
+    ['國','나라','국','國語','국어'],
+    ['軍','군사','군','軍人','군인'],
+    ['金','쇠','금','現金','현금'],
+    ['南','남녘','남','南北','남북'],
+    ['女','계집','녀','男女','남녀'],
+    ['年','해','년','一年','일년'],
+    ['大','큰','대','大韓','대한'],
+    ['東','동녘','동','東海','동해'],
+    ['六','여섯','륙','六十','육십'],
+    ['萬','일만','만','萬歲','만세'],
+    ['母','어미','모','母國','모국'],
+    ['木','나무','목','木材','목재'],
+    ['門','문','문','大門','대문'],
+    ['民','백성','민','國民','국민'],
+    ['白','흰','백','白雪','백설'],
+    ['父','아비','부','父母','부모'],
+    ['北','북녘','북','北韓','북한'],
+    ['四','넉','사','四月','사월'],
+    ['山','뫼','산','山水','산수'],
+    ['三','석','삼','三國','삼국'],
+    ['生','날','생','學生','학생'],
+    ['西','서녘','서','西海','서해'],
+    ['先','먼저','선','先生','선생'],
+    ['小','작을','소','大小','대소'],
+    ['水','물','수','水道','수도'],
+    ['室','집','실','室內','실내'],
+    ['十','열','십','十字','십자'],
+    ['五','다섯','오','五月','오월'],
+    ['王','임금','왕','王國','왕국'],
+    ['外','바깥','외','外國','외국'],
+    ['月','달','월','正月','정월'],
+    ['二','두','이','二月','이월'],
+    ['人','사람','인','人口','인구'],
+    ['一','한','일','一生','일생'],
+    ['日','날','일','日記','일기'],
+    ['長','긴','장','長男','장남'],
+    ['弟','아우','제','弟子','제자'],
+    ['中','가운데','중','中心','중심'],
+    ['靑','푸를','청','靑年','청년'],
+    ['寸','마디','촌','寸數','촌수'],
+    ['七','일곱','칠','七月','칠월'],
+    ['土','흙','토','土地','토지'],
+    ['八','여덟','팔','八月','팔월'],
+    ['學','배울','학','學校','학교'],
+    ['韓','한국','한','韓國','한국'],
+    ['兄','형','형','兄弟','형제'],
+    ['火','불','화','火山','화산']
+  ],
+  7: [
+    ['歌','노래','가','歌手','가수'],
+    ['口','입','구','入口','입구'],
+    ['旗','깃발','기','國旗','국기'],
+    ['同','한가지','동','同時','동시'],
+    ['洞','골','동','洞窟','동굴'],
+    ['冬','겨울','동','冬至','동지'],
+    ['登','오를','등','登校','등교'],
+    ['來','올','래','未來','미래'],
+    ['老','늙을','로','老人','노인'],
+    ['里','마을','리','萬里','만리'],
+    ['林','수풀','림','山林','산림'],
+    ['面','낯','면','面會','면회'],
+    ['命','목숨','명','生命','생명'],
+    ['文','글월','문','文化','문화'],
+    ['問','물을','문','問答','문답'],
+    ['百','일백','백','百姓','백성'],
+    ['夫','지아비','부','工夫','공부'],
+    ['算','셈','산','計算','계산'],
+    ['色','빛','색','特色','특색'],
+    ['夕','저녁','석','夕陽','석양'],
+    ['少','적을','소','少年','소년'],
+    ['所','바','소','住所','주소'],
+    ['數','셈','수','數學','수학'],
+    ['植','심을','식','植物','식물'],
+    ['心','마음','심','中心','중심'],
+    ['語','말씀','어','英語','영어'],
+    ['然','그럴','연','自然','자연'],
+    ['有','있을','유','有力','유력'],
+    ['育','기를','육','教育','교육'],
+    ['邑','고을','읍','邑內','읍내'],
+    ['入','들','입','入學','입학'],
+    ['字','글자','자','漢字','한자'],
+    ['祖','할아비','조','祖父','조부'],
+    ['住','살','주','住民','주민'],
+    ['主','주인','주','主人','주인'],
+    ['重','무거울','중','重要','중요'],
+    ['紙','종이','지','白紙','백지'],
+    ['地','땅','지','土地','토지'],
+    ['千','일천','천','三千','삼천'],
+    ['天','하늘','천','天下','천하'],
+    ['川','내','천','山川','산천'],
+    ['草','풀','초','花草','화초'],
+    ['村','마을','촌','山村','산촌'],
+    ['秋','가을','추','秋夕','추석'],
+    ['春','봄','춘','青春','청춘'],
+    ['出','날','출','出入','출입'],
+    ['便','편할','편','便紙','편지'],
+    ['夏','여름','하','夏服','하복'],
+    ['花','꽃','화','花園','화원'],
+    ['休','쉴','휴','休日','휴일']
+  ],
+  6: [
+    ['感','느낄','감','感情','감정'],
+    ['強','강할','강','強國','강국'],
+    ['開','열','개','公開','공개'],
+    ['京','서울','경','東京','동경'],
+    ['古','예','고','古代','고대'],
+    ['苦','쓸','고','苦生','고생'],
+    ['交','사귈','교','交流','교류'],
+    ['區','구분할','구','區分','구분'],
+    ['郡','고을','군','郡民','군민'],
+    ['根','뿌리','근','根氣','근기'],
+    ['近','가까울','근','近年','근년'],
+    ['級','등급','급','高級','고급'],
+    ['多','많을','다','多數','다수'],
+    ['待','기다릴','대','期待','기대'],
+    ['度','법도','도','年度','연도'],
+    ['頭','머리','두','頭痛','두통'],
+    ['例','법식','례','例題','예제'],
+    ['禮','예도','례','禮節','예절'],
+    ['路','길','로','道路','도로'],
+    ['綠','푸를','록','綠色','녹색'],
+    ['李','오얏','리','李氏','리씨'],
+    ['目','눈','목','耳目','이목'],
+    ['美','아름다울','미','美人','미인'],
+    ['米','쌀','미','白米','백미'],
+    ['朴','성','박','朴氏','박씨'],
+    ['番','차례','번','番地','번지'],
+    ['別','다를','별','區別','구별'],
+    ['病','병','병','病院','병원'],
+    ['服','옷','복','衣服','의복'],
+    ['本','근본','본','日本','일본'],
+    ['使','부릴','사','使用','사용'],
+    ['死','죽을','사','生死','생사'],
+    ['席','자리','석','出席','출석'],
+    ['石','돌','석','化石','화석'],
+    ['速','빠를','속','速度','속도'],
+    ['孫','손자','손','子孫','자손'],
+    ['樹','나무','수','樹木','수목'],
+    ['習','익힐','습','學習','학습'],
+    ['勝','이길','승','勝利','승리'],
+    ['式','법','식','方式','방식'],
+    ['失','잃을','실','失敗','실패'],
+    ['愛','사랑','애','愛國','애국'],
+    ['夜','밤','야','夜間','야간'],
+    ['野','들','야','野球','야구'],
+    ['陽','볕','양','陽地','양지'],
+    ['洋','큰바다','양','大洋','대양'],
+    ['言','말씀','언','言語','언어'],
+    ['英','꽃부리','영','英語','영어'],
+    ['永','길','영','永久','영구'],
+    ['溫','따뜻할','온','溫度','온도'],
+    ['園','동산','원','公園','공원'],
+    ['遠','멀','원','永遠','영원'],
+    ['由','말미암을','유','理由','이유'],
+    ['油','기름','유','石油','석유'],
+    ['銀','은','은','銀行','은행'],
+    ['醫','의원','의','醫院','의원'],
+    ['衣','옷','의','衣類','의류'],
+    ['者','놈','자','學者','학자'],
+    ['章','글','장','文章','문장'],
+    ['在','있을','재','現在','현재'],
+    ['定','정할','정','一定','일정'],
+    ['朝','아침','조','王朝','왕조'],
+    ['族','겨레','족','家族','가족'],
+    ['晝','낮','주','晝夜','주야'],
+    ['親','친할','친','親舊','친구'],
+    ['太','클','태','太陽','태양'],
+    ['通','통할','통','交通','교통'],
+    ['特','특별할','특','特別','특별'],
+    ['合','합할','합','合格','합격'],
+    ['行','다닐','행','行事','행사'],
+    ['向','향할','향','方向','방향'],
+    ['號','이름','호','番號','번호'],
+    ['畫','그림','화','畫家','화가'],
+    ['黃','누를','황','黃色','황색'],
+    ['訓','가르칠','훈','敎訓','교훈']
+  ],
+  5: [
+    ['加','더할','가','加入','가입'],
+    ['可','옳을','가','可能','가능'],
+    ['改','고칠','개','改正','개정'],
+    ['擧','들','거','選擧','선거'],
+    ['去','갈','거','過去','과거'],
+    ['件','물건','건','事件','사건'],
+    ['建','세울','건','建物','건물'],
+    ['健','굳셀','건','健康','건강'],
+    ['輕','가벼울','경','輕重','경중'],
+    ['競','다툴','경','競爭','경쟁'],
+    ['景','볕','경','風景','풍경'],
+    ['考','생각할','고','參考','참고'],
+    ['固','굳을','고','固定','고정'],
+    ['曲','굽을','곡','曲線','곡선'],
+    ['橋','다리','교','大橋','대교'],
+    ['救','구원할','구','救急','구급'],
+    ['貴','귀할','귀','貴重','귀중'],
+    ['規','법','규','規則','규칙'],
+    ['給','줄','급','給食','급식'],
+    ['汽','물끓는김','기','汽車','기차'],
+    ['期','기약할','기','時期','시기'],
+    ['技','재주','기','技術','기술'],
+    ['吉','길할','길','吉日','길일'],
+    ['壇','단','단','花壇','화단'],
+    ['談','말씀','담','相談','상담'],
+    ['都','도읍','도','首都','수도'],
+    ['島','섬','도','半島','반도'],
+    ['落','떨어질','락','部落','부락'],
+    ['冷','찰','랭','冷水','냉수'],
+    ['量','헤아릴','량','分量','분량'],
+    ['領','거느릴','령','領土','영토'],
+    ['令','하여금','령','命令','명령'],
+    ['料','헤아릴','료','材料','재료'],
+    ['馬','말','마','馬車','마차'],
+    ['末','끝','말','月末','월말'],
+    ['亡','망할','망','死亡','사망'],
+    ['買','살','매','買入','매입'],
+    ['賣','팔','매','賣出','매출'],
+    ['無','없을','무','有無','유무'],
+    ['倍','곱','배','二倍','이배'],
+    ['比','견줄','비','比較','비교'],
+    ['費','쓸','비','費用','비용'],
+    ['鼻','코','비','鼻音','비음'],
+    ['氷','얼음','빙','氷水','빙수'],
+    ['寫','베낄','사','寫眞','사진'],
+    ['思','생각','사','意思','의사'],
+    ['査','조사할','사','調査','조사'],
+    ['賞','상줄','상','大賞','대상'],
+    ['序','차례','서','順序','순서'],
+    ['善','착할','선','改善','개선'],
+    ['選','가릴','선','選手','선수'],
+    ['船','배','선','汽船','기선'],
+    ['示','보일','시','展示','전시'],
+    ['案','책상','안','案內','안내'],
+    ['漁','고기잡을','어','漁船','어선'],
+    ['魚','물고기','어','魚類','어류'],
+    ['億','억','억','億萬','억만'],
+    ['熱','더울','열','熱心','열심'],
+    ['葉','잎','엽','落葉','낙엽'],
+    ['屋','집','옥','屋上','옥상'],
+    ['完','완전할','완','完全','완전'],
+    ['曜','빛날','요','曜日','요일'],
+    ['浴','목욕할','욕','浴室','욕실'],
+    ['牛','소','우','牛乳','우유'],
+    ['雄','수컷','웅','英雄','영웅'],
+    ['原','언덕','원','原則','원칙'],
+    ['院','집','원','病院','병원'],
+    ['願','원할','원','所願','소원'],
+    ['位','자리','위','地位','지위'],
+    ['耳','귀','이','耳目','이목'],
+    ['因','인할','인','原因','원인'],
+    ['災','재앙','재','災害','재해'],
+    ['再','두','재','再生','재생'],
+    ['爭','다툴','쟁','戰爭','전쟁'],
+    ['貯','쌓을','저','貯金','저금'],
+    ['赤','붉을','적','赤色','적색'],
+    ['停','머무를','정','停車','정차'],
+    ['操','잡을','조','體操','체조'],
+    ['終','마칠','종','最終','최종'],
+    ['罪','허물','죄','罪人','죄인'],
+    ['止','그칠','지','中止','중지'],
+    ['唱','부를','창','合唱','합창'],
+    ['鐵','쇠','철','鐵道','철도'],
+    ['初','처음','초','最初','최초'],
+    ['最','가장','최','最高','최고'],
+    ['祝','빌','축','祝賀','축하'],
+    ['致','이를','치','一致','일치'],
+    ['則','법칙','칙','法則','법칙'],
+    ['他','다를','타','他人','타인'],
+    ['打','칠','타','打擊','타격'],
+    ['卓','높을','탁','卓球','탁구'],
+    ['炭','숯','탄','石炭','석탄'],
+    ['板','널','판','黑板','흑판'],
+    ['敗','패할','패','失敗','실패'],
+    ['河','물','하','氷河','빙하'],
+    ['寒','찰','한','寒冷','한랭'],
+    ['許','허락할','허','許可','허가'],
+    ['湖','호수','호','湖水','호수'],
+    ['患','근심','환','患者','환자'],
+    ['黑','검을','흑','黑白','흑백']
+  ]
+};
+var HANJA_BANK = {};
+(function(){
+  for(var gi=0; gi<HANJA_GRADES.length; gi++){
+    var g = HANJA_GRADES[gi], rows = HANJA_RAW[g], out = [];
+    for(var j=0; j<rows.length; j++){
+      out.push({ h:rows[j][0], hun:rows[j][1], eum:rows[j][2], word:rows[j][3], wr:rows[j][4] });
+    }
+    HANJA_BANK[g] = out;
+  }
+})();
+
+
+function normHanjaGrade(v){
+  var g = (typeof v === 'string') ? parseInt(v, 10) : v;
+  return (g === 7 || g === 6 || g === 5) ? g : 8;
+}
+
+var recentHanja = [];
+
+function hanjaPool(){ return HANJA_BANK[S.hanjaSel] || HANJA_BANK[8]; }
+
+/* 문제 유형 — 1단계는 독음·뜻 위주, 2단계부터 한자어 독음, 보스는 한자어 비중을 높인다 */
+function hanjaQuestionKind(stage, isBoss){
+  var s = clamp(stage || 1, 1, 5);
+  var r = Math.random();
+  if(isBoss){
+    if(r < 0.62) return 'word';
+    if(r < 0.80) return 'eum';
+    if(r < 0.92) return 'hun';
+    return 'char';
+  }
+  if(s === 1){
+    if(r < 0.40) return 'eum';
+    if(r < 0.82) return 'hun';
+    return 'char';
+  }
+  if(s === 2){
+    if(r < 0.28) return 'eum';
+    if(r < 0.55) return 'hun';
+    if(r < 0.75) return 'char';
+    return 'word';
+  }
+  if(r < 0.22) return 'eum';
+  if(r < 0.44) return 'hun';
+  if(r < 0.60) return 'char';
+  return 'word';
+}
+
+/* 4지선다 — 정답은 하나, 보기끼리 겹치지 않는다 */
+function genHanja(stage, isBoss){
+  var pool = hanjaPool();
+  var kind = hanjaQuestionKind(stage, isBoss);
+
+  /* 최근에 낸 글자는 잠깐 피해서 같은 글자가 연달아 나오지 않게 */
+  var entry = pool[0], guard = 0;
+  do{
+    entry = pick(pool);
+    guard++;
+  } while(recentHanja.indexOf(entry.h) !== -1 && guard < 40);
+  recentHanja.push(entry.h);
+  if(recentHanja.length > 12) recentHanja.shift();
+
+  var choices = [], answer = '', big = '', ask = '', hint = '', plain = '';
+  var i, e;
+
+  if(kind === 'eum'){
+    answer = entry.eum;
+    choices = [answer];
+    var eums = [];
+    for(i=0;i<pool.length;i++){
+      e = pool[i];
+      if(e.h === entry.h || e.eum === entry.eum) continue;   /* 같은 음은 정답이 둘로 보이므로 제외 */
+      eums.push(e.eum);
+    }
+    shuffle(eums);
+    for(i=0;i<eums.length && choices.length<4;i++){
+      if(choices.indexOf(eums[i]) === -1) choices.push(eums[i]);
+    }
+    big = entry.h;
+    ask = '음(소리)은?';
+    hint = '소리 내어 읽어 보세요';
+    plain = entry.h + ' 음?';
+
+  } else if(kind === 'hun'){
+    answer = entry.hun;
+    choices = [answer];
+    var huns = [];
+    for(i=0;i<pool.length;i++){
+      e = pool[i];
+      if(e.h === entry.h || e.hun === entry.hun) continue;
+      if(e.eum === entry.eum) continue;                     /* 같은 음 글자는 헷갈리므로 제외 */
+      huns.push(e.hun);
+    }
+    shuffle(huns);
+    for(i=0;i<huns.length && choices.length<4;i++){
+      if(choices.indexOf(huns[i]) === -1) choices.push(huns[i]);
+    }
+    big = entry.h;
+    ask = '뜻(훈)은?';
+    hint = '무슨 뜻일까요?';
+    plain = entry.h + ' 뜻?';
+
+  } else if(kind === 'char'){
+    answer = entry.h;
+    choices = [answer];
+    var glyphs = [];
+    for(i=0;i<pool.length;i++){
+      e = pool[i];
+      if(e.h === entry.h || e.eum === entry.eum) continue;  /* 같은 음의 다른 글자는 오답 금지 */
+      glyphs.push(e.h);
+    }
+    shuffle(glyphs);
+    for(i=0;i<glyphs.length && choices.length<4;i++){
+      if(choices.indexOf(glyphs[i]) === -1) choices.push(glyphs[i]);
+    }
+    big = entry.hun + ' ' + entry.eum;
+    ask = '한자는?';
+    hint = '알맞은 한자를 고르세요';
+    plain = entry.hun + ' ' + entry.eum + '?';
+
+  } else {
+    answer = entry.wr;
+    choices = [answer];
+    var cands = [];
+    var rev = entry.wr.charAt(1) + entry.wr.charAt(0);
+    if(rev !== answer) cands.push(rev);
+    for(i=0;i<pool.length;i++){
+      e = pool[i];
+      if(e.wr === answer) continue;
+      cands.push(e.wr);
+      cands.push(answer.charAt(0) + e.wr.charAt(1));       /* 첫소리만 바꾼 그럴듯한 오답 */
+      cands.push(e.wr.charAt(0) + answer.charAt(1));       /* 끝소리만 바꾼 오답 */
+    }
+    shuffle(cands);
+    for(i=0;i<cands.length && choices.length<4;i++){
+      if(cands[i] !== answer && choices.indexOf(cands[i]) === -1) choices.push(cands[i]);
+    }
+    big = entry.word;
+    ask = '어떻게 읽을까요?';
+    hint = '한자어를 소리 내어 읽어 보세요';
+    plain = entry.word + '?';
+  }
+
+  /* 보기가 4개가 되지 않는 예외 상황을 막는 안전장치 */
+  var filler = ['가','나','다','라','마','바','사','아','자','차'];
+  for(i=0;choices.length<4 && i<filler.length;i++){
+    if(choices.indexOf(filler[i]) === -1 && filler[i] !== answer) choices.push(filler[i]);
+  }
+
+  return {
+    type: 'hanja', kind: kind,
+    hanja: entry.h, hun: entry.hun, eum: entry.eum, word: entry.word,
+    answer: answer, choices: shuffle(choices),
+    big: big, ask: ask, hint: hint, plain: plain
+  };
+}
 
 /* =========================================================
    problem generators
@@ -1221,6 +1737,8 @@ var S = {
   mode: 'math',
   grade: 1,
   gradeSel: 1,
+  hanjaSel: 8,
+  hanjaOpen: false,
   stage: 1,
   hearts: 5,
   score: 0,
@@ -1262,7 +1780,7 @@ var BOSSES = [
 ];
 
 var MOB_EMOJI = ['👾','👹','👻','🦠','🐙','🕷️','🤖','🦑','🐛','🦇','😈','🐊'];
-var STAGE_NAMES = { math:'수학', word:'낱말' };
+var STAGE_NAMES = { math:'수학', word:'낱말', hanja:'한자' };
 
 function bossInfo(stage){
   return BOSSES[(Math.max(1, stage) - 1) % BOSSES.length];
@@ -1285,6 +1803,11 @@ var elPanelIdle = $('panelIdle');
 var elPanelMath = $('panelMath');
 var elPanelMathChoice = $('panelMathChoice');
 var elPanelWord = $('panelWord');
+var elPanelHanja = $('panelHanja');
+var elHBig = $('hBig');
+var elHQ = $('hQ');
+var elHHint = $('hHint');
+var elHChoices = $('hChoices');
 var elQMath = $('qMath');
 var elQMathC = $('qMathC');
 var elMChoices = $('mChoices');
@@ -1374,19 +1897,24 @@ function mathDistractors(ans){
   return out;
 }
 
-function makeProblem(stage){
-  if(modeType() === 'math'){
+function makeProblem(stage, isBoss){
+  var mt = modeType();
+  if(mt === 'math'){
     var p = genMath(S.grade, stage);
     if(S.mathType === 'choice') p.choices = shuffle(mathDistractors(p.ans));
     return p;
   }
+  if(mt === 'hanja') return genHanja(stage, isBoss);
   return genWord(stage);
 }
 
 /* =========================================================
    HUD
    ========================================================= */
-function bestKey(mode, grade){ return 'gm_best_' + mode + '_g' + normGrade(grade); }
+function bestKey(mode, grade){
+  if(mode === 'hanja') return 'gm_best_hanja_g' + normHanjaGrade(grade);
+  return 'gm_best_' + mode + '_g' + normGrade(grade);
+}
 var LEGACY_BEST = { math:'gm_best_math', word:'gm_best_word', mix:'gm_best_mix' };
 function bestOf(mode, grade){
   var v = Store.get(bestKey(mode, grade), null);
@@ -1402,6 +1930,7 @@ function updateHud(){
   elHearts.textContent = new Array(full + 1).join('❤️') + new Array(5 - full + 1).join('🤍');
   elScore.textContent = S.score + '점';
   if(S.mode === 'word') elStage.textContent = '🔤 ' + S.stage + '단계';
+  else if(S.mode === 'hanja') elStage.textContent = '🀄 ' + S.hanjaSel + '급 · ' + S.stage + '단계';
   else elStage.textContent = gradeTag(S.grade) + ' · ' + S.stage + '단계';
   if(S.combo >= 2){ elCombo.hidden = false; elCombo.textContent = '🔥 x' + S.combo; }
   else elCombo.hidden = true;
@@ -1411,7 +1940,7 @@ function addScore(pts){
   S.score += pts;
   if(S.score > S.best){
     S.best = S.score;
-    Store.set(bestKey(S.mode, S.grade), S.best);
+    Store.set(bestKey(S.mode, S.mode === 'hanja' ? S.hanjaSel : S.grade), S.best);
   }
   updateHud();
 }
@@ -1720,6 +2249,31 @@ function shakeScreen(power){
    ========================================================= */
 function showPanelFor(prob){
   elPanelIdle.hidden = true;
+  if(prob && prob.type === 'hanja'){
+    elPanelMath.hidden = true;
+    elPanelMathChoice.hidden = true;
+    elPanelWord.hidden = true;
+    elPanelHanja.hidden = false;
+    elHBig.className = 'hbig' + (prob.kind === 'word' ? ' word' : (prob.kind === 'char' ? ' ko' : ''));
+    elHBig.textContent = prob.big;
+    /* 긴 훈(예: '물끓는김 기')도 판 너비를 넘지 않게 */
+    var avail = Math.min(240, Math.max(110, window.innerWidth * 0.58));
+    var base = (prob.kind === 'word') ? 40 : (prob.kind === 'char' ? 24 : 46);
+    elHBig.style.fontSize = fitFont([prob.big], avail, base, 14).toFixed(0) + 'px';
+    elHQ.textContent = prob.ask;
+    elHHint.textContent = prob.hint;
+    var hb = elHChoices.querySelectorAll('.ch');
+    for(var hi=0;hi<hb.length;hi++){
+      var hsp = hb[hi].querySelector('span');
+      hsp.textContent = prob.choices[hi] || '';
+      hb[hi].classList.remove('bad');
+      if(prob.kind === 'char') hb[hi].classList.add('glyph');
+      else hb[hi].classList.remove('glyph');
+      hb[hi].style.visibility = prob.choices[hi] ? 'visible' : 'hidden';
+    }
+    return;
+  }
+  elPanelHanja.hidden = true;
   if(prob && prob.type === 'word'){
     elPanelMath.hidden = true;
     elPanelMathChoice.hidden = true;
@@ -1767,6 +2321,7 @@ function showPanelFor(prob){
     elPanelMath.hidden = true;
     elPanelMathChoice.hidden = true;
     elPanelWord.hidden = true;
+    elPanelHanja.hidden = true;
     elPanelIdle.hidden = false;
   }
 }
@@ -1826,7 +2381,7 @@ function chooseX(){
 
 function bubbleTextOf(prob){
   if(prob.type === 'math') return prob.text;
-  return prob.plain;
+  return prob.plain;   /* 낱말·한자 모두 plain을 쓴다 */
 }
 
 function bubbleMaxW(m){
@@ -1852,7 +2407,7 @@ function setBubbleText(bub, prob, m){
 
 function spawnMonster(isBoss){
   var par = stageParams(S.stage);
-  var prob = makeProblem(S.stage);
+  var prob = makeProblem(S.stage, isBoss);
   for(var tryN = 0; tryN < 6; tryN++){
     var ptxt = bubbleTextOf(prob);
     var dup = false;
@@ -1860,7 +2415,7 @@ function spawnMonster(isBoss){
       if(!S.monsters[mi].dead && bubbleTextOf(S.monsters[mi].prob) === ptxt){ dup = true; break; }
     }
     if(!dup) break;
-    prob = makeProblem(S.stage);
+    prob = makeProblem(S.stage, isBoss);
   }
   var boss = null;
   if(isBoss){
@@ -2034,6 +2589,24 @@ function chooseMathChoice(i){
   }
 }
 
+function chooseHanja(i){
+  var t = currentTarget();
+  if(!t || t.prob.type !== 'hanja') return;
+  if(Date.now() < lockUntil) return;
+  var v = t.prob.choices[i];
+  if(!v) return;
+  if(v === t.prob.answer){
+    hitTarget();
+  } else {
+    var btns = elHChoices.querySelectorAll('.ch');
+    if(btns[i]){
+      btns[i].classList.add('bad');
+      setTimeout(function(){ if(btns[i]) btns[i].classList.remove('bad'); }, 400);
+    }
+    failAnswer('앗!');
+  }
+}
+
 function failAnswer(word){
   S.combo = 0;
   S.input = '';
@@ -2097,7 +2670,7 @@ function resolveHit(ms){
     m.y = clamp(m.y - 0.06, -0.05, 0.86);
     m.el.style.top = (m.y * 100).toFixed(2) + '%';
     if(m.hp <= 0){ defeatBoss(m); return; }
-    m.prob = makeProblem(S.stage);
+    m.prob = makeProblem(S.stage, true);
     var bub = m.el.querySelector('.bubble');
     if(bub) setBubbleText(bub, m.prob, m);
     if(!currentTarget()) setTarget(m);
@@ -2201,6 +2774,7 @@ function defeatBoss(m){
   elPanelMath.hidden = true;
   elPanelMathChoice.hidden = true;
   elPanelWord.hidden = true;
+  elPanelHanja.hidden = true;
 
   setTimeout(stageClearScreen, 650);
 }
@@ -2223,7 +2797,7 @@ function stageClearScreen(){
       ]
     });
   } else {
-    var clearTitle = (S.mode === 'word' ? '' : gradeTag(S.grade) + ' ') + S.stage + '단계 클리어!';
+    var clearTitle = (S.mode === 'word' ? '' : (S.mode === 'hanja' ? '한자 ' + S.hanjaSel + '급 ' : gradeTag(S.grade) + ' ')) + S.stage + '단계 클리어!';
     showOverlay({
       emoji: '🎉',
       title: heroName ? heroName + ', ' + clearTitle : clearTitle,
@@ -2467,6 +3041,17 @@ elMChoices.addEventListener('pointerdown', function(ev){
   chooseMathChoice(parseInt(btn.getAttribute('data-mi'), 10));
 });
 
+if(elHChoices){
+  elHChoices.addEventListener('pointerdown', function(ev){
+    var btn = ev.target.closest ? ev.target.closest('.ch') : null;
+    if(!btn) return;
+    ev.preventDefault();
+    if(!S.running || S.paused) return;
+    Sfx.unlock();
+    chooseHanja(parseInt(btn.getAttribute('data-hi'), 10));
+  });
+}
+
 document.addEventListener('keydown', function(ev){
   if(elGame.hidden) return;
   var k = ev.key;
@@ -2487,6 +3072,8 @@ document.addEventListener('keydown', function(ev){
     if(k >= '0' && k <= '9' && k.length === 1){ ev.preventDefault(); Sfx.unlock(); pressDigit(k); }
     else if(k === 'Backspace'){ ev.preventDefault(); S.input = S.input.slice(0, -1); renderInput(); }
     else if(k === 'Enter'){ ev.preventDefault(); submitMath(); }
+  } else if(t.prob.type === 'hanja'){
+    if(k >= '1' && k <= '4' && k.length === 1){ ev.preventDefault(); Sfx.unlock(); chooseHanja(parseInt(k,10) - 1); }
   } else {
     if(k >= '1' && k <= '4' && k.length === 1){ ev.preventDefault(); Sfx.unlock(); chooseWord(parseInt(k,10) - 1); }
   }
@@ -2853,6 +3440,12 @@ function refreshTitleBests(){
     var el = document.querySelector('[data-best="' + modes[i] + '"]');
     if(el) el.textContent = gradeTag(g) + ' 최고 ' + v + '점';
   }
+  /* 🀄 한자 — 고른 급수의 최고 점수 */
+  var hv = bestOf('hanja', S.hanjaSel);
+  if(hv > all) all = hv;
+  var hel = document.querySelector('[data-best="hanja"]');
+  if(hel) hel.textContent = S.hanjaSel + '급 최고 ' + hv + '점';
+
   var be = $('bestAll');
   if(be) be.textContent = all;
   var info = GRADE_INFO[g];
@@ -2860,6 +3453,40 @@ function refreshTitleBests(){
   if(sm && info) sm.textContent = info.sub;
   var sx = $('subMix');
   if(sx) sx.textContent = gradeTag(g) + ' 수학(' + (S.mathType === 'choice' ? '객관식' : '주관식') + ') + 낱말';
+}
+
+/* 🀄 한자 급수 — 8급 입문 · 7급 초급 · 6급 중급 · 5급 심화 */
+var HANJA_GRADE_KEY = 'gm_hanja_grade';
+var hanjaCardEl = document.querySelector('.mode-card[data-mode="hanja"]');
+var hzRowEl = $('hanjaRow');
+var hzBtns = document.querySelectorAll('.hz-btn');
+
+function setHanjaGrade(g, silent){
+  S.hanjaSel = normHanjaGrade(g);
+  Store.set(HANJA_GRADE_KEY, S.hanjaSel);
+  for(var i=0;i<hzBtns.length;i++){
+    var gi = parseInt(hzBtns[i].getAttribute('data-hz'), 10);
+    if(gi === S.hanjaSel) hzBtns[i].classList.add('on');
+    else hzBtns[i].classList.remove('on');
+  }
+  refreshTitleBests();
+  if(!silent) Sfx.tap();
+}
+
+/* 한자를 고르면 학년·답 방식(수학 전용) 대신 급수 칩이 나온다 */
+function setHanjaOpen(on){
+  S.hanjaOpen = !!on;
+  if(hzRowEl) hzRowEl.hidden = !on;
+  var gr = $('gradeRow'), mt = $('mathTypeRow');
+  if(gr) gr.hidden = !!on;
+  if(mt) mt.hidden = !!on;
+  if(hanjaCardEl){
+    if(on) hanjaCardEl.classList.add('on');
+    else hanjaCardEl.classList.remove('on');
+    hanjaCardEl.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  var sub = $('subHanja');
+  if(sub) sub.textContent = on ? '급수를 고르면 바로 시작!' : '한국어문회 8급부터 5급까지';
 }
 
 function setGrade(g){
@@ -2972,6 +3599,9 @@ function startGame(mode){
   Sfx.unlock();
   S.mode = mode;
   S.grade = normGrade(S.gradeSel);
+  S.hanjaSel = normHanjaGrade(S.hanjaSel);
+  if(mode === 'hanja') setHanjaOpen(true);
+  else setHanjaOpen(false);
   S.stage = 1;
   S.hearts = 5;
   S.score = 0;
@@ -2985,8 +3615,9 @@ function startGame(mode){
   S.stageDone = false;
   S.paused = false;
   S.spawnT = 1.3;
-  S.best = bestOf(mode, S.grade);
+  S.best = (mode === 'hanja') ? bestOf('hanja', S.hanjaSel) : bestOf(mode, S.grade);
   recentWords = [];
+  recentHanja = [];
 
   for(var i=0;i<S.monsters.length;i++){
     if(S.monsters[i].el.parentNode) S.monsters[i].el.parentNode.removeChild(S.monsters[i].el);
@@ -3004,9 +3635,10 @@ function startGame(mode){
   elPanelIdle.textContent = '몬스터를 기다리는 중…';
 
   var spdTag = (speedLevel === 'normal') ? '' : ' · ' + speedLabel();
-  banner(heroName ? '출동! ' + heroName + ' 용사!' : '출동! 용사!',
-         (S.mode === 'word' ? '낱말을 맞혀라!'
-           : (gradeTag(S.grade) + ' 수학 ' + (S.mathType === 'choice' ? '객관식' : '주관식') + ' 시작!')) + spdTag, 1600);
+  var modeSub = (S.mode === 'hanja') ? ('한자 ' + S.hanjaSel + '급 시작! · ' + HANJA_META[S.hanjaSel].level)
+              : (S.mode === 'word' ? '낱말을 맞혀라!'
+              : (gradeTag(S.grade) + ' 수학 ' + (S.mathType === 'choice' ? '객관식' : '주관식') + ' 시작!'));
+  banner(heroName ? '출동! ' + heroName + ' 용사!' : '출동! 용사!', modeSub + spdTag, 1600);
   startLoop();
 }
 
@@ -3028,12 +3660,40 @@ for(var gi=0;gi<gradeBtns.length;gi++){
 var modeCards = document.querySelectorAll('.mode-card');
 for(var i=0;i<modeCards.length;i++){
   (function(card){
+    if(card.getAttribute('data-mode') === 'hanja') return;   /* 한자 카드는 급수 선택을 거친다 */
     card.addEventListener('pointerdown', function(ev){
       ev.preventDefault();
       Sfx.unlock();
       startGame(card.getAttribute('data-mode'));
     });
   })(modeCards[i]);
+}
+
+/* 🀄 한자 카드 — 처음 누르면 급수 칩이 활짝, 다시 누르면 고른 급수로 시작 */
+if(hanjaCardEl){
+  hanjaCardEl.addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    Sfx.unlock();
+    if(!S.hanjaOpen){
+      setHanjaOpen(true);
+      Sfx.tap();
+    } else {
+      Sfx.tap();
+      startGame('hanja');
+    }
+  });
+}
+
+/* 급수 칩 — 누르면 그 급수로 바로 시작 */
+for(var hzi=0;hzi<hzBtns.length;hzi++){
+  (function(btn){
+    btn.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      Sfx.unlock();
+      setHanjaGrade(btn.getAttribute('data-hz'));
+      startGame('hanja');
+    });
+  })(hzBtns[hzi]);
 }
 
 $('btnSound').addEventListener('pointerdown', function(ev){
@@ -3142,9 +3802,33 @@ if(nameEl){
 setMathType(Store.get('gm_math_type', 'typein'), true);
 setGrade(Store.get('gm_grade', 1));
 setSpeed(Store.get(SPEED_KEY, 'normal'), true);
+setHanjaGrade(Store.get(HANJA_GRADE_KEY, 8), true);
+setHanjaOpen(false);
 applyHeroPhoto(heroPhotoUrl());
 soundIcon();
 if(heroName) setTimeout(function(){ heroToast('오늘도 출동! ' + heroName + ' 용사!'); }, 700);
+
+/* 검증용 훅 — ?test=1 로 열었을 때만 문제 생성기를 밖에 내어준다 */
+try{
+  if(/[?&]test=1/.test(location.search)){
+    window.__gmHanjaTest = {
+      bank: HANJA_BANK,
+      grades: HANJA_GRADES,
+      setGrade: function(g){ S.hanjaSel = normHanjaGrade(g); recentHanja = []; },
+      gen: function(stage, boss){ return genHanja(stage, boss); },
+      show: function(prob){ showPanelFor(prob); },
+      cur: function(){ var t = currentTarget(); return t ? t.prob : null; },
+      state: S,
+      kindOf: function(stage, boss, kind){
+        for(var i=0;i<400;i++){
+          var p = genHanja(stage, boss);
+          if(p.kind === kind) return p;
+        }
+        return genHanja(stage, boss);
+      }
+    };
+  }
+}catch(e){}
 
 })();
 </script>
