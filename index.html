@@ -165,19 +165,26 @@ body{
 .mt-btn.on{background:linear-gradient(135deg,#4facfe,#2f7ff0);color:#fff;border-color:#2f7ff0;
   box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
 
-/* ---------- 몬스터 속도 (느림 / 보통 / 빠름) ---------- */
-.spd-row{display:flex;align-items:center;gap:4px;width:100%;}
+/* ---------- 몬스터 속도 (🐌 왕느림 / 🦥 더느림 / 🐢 느림 / 🏃 보통 / ⚡ 빠름) ---------- */
+.spd-row{display:flex;align-items:center;gap:3px;width:100%;}
+.spd-row .grade-cap{padding:5px 5px;font-size:clamp(9px,2.6vw,12px);}
 .spd-btn{flex:1 1 0;min-width:0;border:2px solid #cfe3f8;background:#fff;color:#2a5b96;
-  border-radius:12px;padding:7px 0;font-family:inherit;font-weight:900;font-size:clamp(12px,3.4vw,15px);
+  border-radius:12px;padding:7px 1px;font-family:inherit;font-weight:900;
+  font-size:clamp(11.5px,3.2vw,14px);letter-spacing:-.2px;white-space:nowrap;
   line-height:1;cursor:pointer;box-shadow:0 3px 0 #dbe9f8;
   transition:background .15s,box-shadow .07s,transform .07s,color .15s;}
 .spd-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe9f8;}
 .spd-btn.on{color:#fff;border-color:#2f7ff0;background:linear-gradient(135deg,#4facfe,#2f7ff0);
   box-shadow:0 3px 0 #1f5cb3,0 0 12px rgba(79,172,254,.5);}
+.spd-btn[data-speed="uslow"].on{border-color:#6a4fd8;background:linear-gradient(135deg,#a794f7,#6a4fd8);
+  box-shadow:0 3px 0 #4a33a0,0 0 12px rgba(140,110,240,.45);}
+.spd-btn[data-speed="xslow"].on{border-color:#1f8f86;background:linear-gradient(135deg,#5ed3c8,#1f8f86);
+  box-shadow:0 3px 0 #146e67,0 0 12px rgba(70,190,175,.42);}
 .spd-btn[data-speed="slow"].on{border-color:#2f9c3f;background:linear-gradient(135deg,#79d95a,#2f9c3f);
   box-shadow:0 3px 0 #1f7a2c,0 0 12px rgba(80,200,110,.45);}
 .spd-btn[data-speed="fast"].on{border-color:#e2620f;background:linear-gradient(135deg,#ffb545,#f4711f);
   box-shadow:0 3px 0 #b34a0c,0 0 12px rgba(255,140,60,.45);}
+@media (max-width:359px){.spd-btn{font-size:10.5px;letter-spacing:-.4px;}}
 
 /* ---------- hud ---------- */
 #screenGame{align-items:center;justify-content:center;
@@ -219,6 +226,8 @@ body{
   font-family:inherit;font-weight:900;font-size:clamp(10px,2.9vw,13px);line-height:1;color:#2a5b96;
   white-space:nowrap;box-shadow:0 2px 0 #e2eefb;transition:background .15s,border-color .15s,color .15s,transform .07s;}
 .spd-hud:active{transform:scale(.93);box-shadow:none;}
+.spd-hud[data-speed="uslow"]{border-color:#cfc2f5;background:#f8f4ff;color:#5b3fa8;box-shadow:0 2px 0 #e7e0fb;}
+.spd-hud[data-speed="xslow"]{border-color:#aee3dd;background:#f0fffd;color:#1a7a72;box-shadow:0 2px 0 #d8f3ef;}
 .spd-hud[data-speed="slow"]{border-color:#b7e6c0;background:#f1fff4;color:#237c2c;box-shadow:0 2px 0 #dcf3e2;}
 .spd-hud[data-speed="fast"]{border-color:#ffcf9e;background:#fff6ec;color:#b34a0c;box-shadow:0 2px 0 #ffe6cf;}
 .spd-hud .sh-ico{font-size:clamp(12px,3.6vw,16px);line-height:1;}
@@ -670,7 +679,7 @@ body{
 
       <div class="name-row">
         <span class="grade-cap" aria-hidden="true">🏷️ 이름</span>
-        <input class="name-in" id="heroName" type="text" maxlength="10" placeholder="예: 해준"
+        <input class="name-in" id="heroName" type="text" maxlength="10" placeholder="예: 이서"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                enterkeyhint="done" aria-label="주인공 이름 (최대 10자)">
       </div>
@@ -683,6 +692,8 @@ body{
 
       <div class="spd-row" id="speedRow" role="group" aria-label="몬스터 속도 선택">
         <span class="grade-cap">속도</span>
+        <button class="spd-btn" data-speed="uslow" type="button">🐌 왕느림</button>
+        <button class="spd-btn" data-speed="xslow" type="button">🦥 더느림</button>
         <button class="spd-btn" data-speed="slow" type="button">🐢 느림</button>
         <button class="spd-btn on" data-speed="normal" type="button">🏃 보통</button>
         <button class="spd-btn" data-speed="fast" type="button">⚡ 빠름</button>
@@ -2111,14 +2122,14 @@ var elOverlay = $('overlay');
    ========================================================= */
 var SPEED_BOOST = 1.30;   // 몹 하강 속도 (기존 대비 +30%)
 
-/* 속도 난이도 — 🐢 느림 / 🏃 보통 / ⚡ 빠름 (기기 안(localStorage)에만 저장) */
+/* 속도 난이도 — 🐌 왕느림 / 🦥 더느림 / 🐢 느림 / 🏃 보통 / ⚡ 빠름 (기기 안(localStorage)에만 저장) */
 var SPEED_KEY = 'gm_speed_level';
-var SPEED_LEVELS = { slow: 0.75, normal: 1.00, fast: 1.35 };
-var SPEED_LABELS = { slow: '🐢 느림', normal: '🏃 보통', fast: '⚡ 빠름' };
+var SPEED_LEVELS = { uslow: 0.35, xslow: 0.50, slow: 0.75, normal: 1.00, fast: 1.35 };
+var SPEED_LABELS = { uslow: '🐌 왕느림', xslow: '🦥 더느림', slow: '🐢 느림', normal: '🏃 보통', fast: '⚡ 빠름' };
 var speedLevel = 'normal';
 
 function normSpeed(v){
-  return (v === 'slow' || v === 'fast') ? v : 'normal';
+  return Object.prototype.hasOwnProperty.call(SPEED_LEVELS, v) ? v : 'normal';
 }
 
 function speedFactor(){
@@ -2150,7 +2161,7 @@ function stageParams(stage){
   // 학년이 올라가면 문제가 길어지므로 몹이 나오는 간격만 아주 살짝 넉넉하게
   var gap = (g >= 5) ? 1.16 : (g === 4 ? 1.09 : 1);
   // 5세는 손으로 세면서 답할 수 있도록 하강 속도를 현재 속도의 0.7배로 (초1~초6은 그대로 1.30배)
-  // 여기에 고른 속도(느림 0.75 / 보통 1.00 / 빠름 1.35)를 한 번 더 곱한다
+  // 여기에 고른 속도(왕느림 0.35 / 더느림 0.50 / 느림 0.75 / 보통 1.00 / 빠름 1.35)를 한 번 더 곱한다
   return { spawn: p.spawn * gap, speed: p.speed * speedScale() };
 }
 
@@ -3816,7 +3827,7 @@ function setGrade(g){
   refreshTitleBests();
 }
 
-/* 몬스터 속도 — 🐢 느림 / 🏃 보통 / ⚡ 빠름 */
+/* 몬스터 속도 — 🐌 왕느림 / 🦥 더느림 / 🐢 느림 / 🏃 보통 / ⚡ 빠름 */
 function setSpeed(v, silent){
   var prev = speedFactor();
   speedLevel = normSpeed(v);
@@ -3853,8 +3864,8 @@ function syncSpeedHud(){
   b.setAttribute('aria-label', '몬스터 속도 바꾸기 (지금: ' + txt + ')');
 }
 
-/* 게임 중 HUD 버튼 — 느림 → 보통 → 빠름 → 느림 순서로 바꾸기 */
-var SPEED_ORDER = ['slow','normal','fast'];
+/* 게임 중 HUD 버튼 — 왕느림 → 더느림 → 느림 → 보통 → 빠름 → 왕느림 순서로 바꾸기 */
+var SPEED_ORDER = ['uslow','xslow','slow','normal','fast'];
 function cycleSpeed(){
   var i = SPEED_ORDER.indexOf(speedLevel);
   setSpeed(SPEED_ORDER[(i + 1) % SPEED_ORDER.length], true);
@@ -4991,7 +5002,7 @@ if(btnSpeedEl){
   });
 }
 
-/* 속도 토글 (느림 / 보통 / 빠름) */
+/* 속도 토글 (왕느림 / 더느림 / 느림 / 보통 / 빠름) */
 var spdBtns = document.querySelectorAll('.spd-btn');
 for(var si=0;si<spdBtns.length;si++){
   (function(btn){
